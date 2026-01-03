@@ -1,0 +1,87 @@
+{
+  "name": "n8n-nodes-celo",
+  "version": "1.0.0",
+  "description": "A comprehensive n8n community node for Celo blockchain providing 12 resources and 60+ operations for stablecoins, identity, staking, and governance. Includes Mento exchange, phone number attestations, and multi-currency fee payment support.",
+  "license": "BUSL-1.1",
+  "author": {
+    "name": "Velocity BPA",
+    "email": "licensing@velobpa.com",
+    "url": "https://velobpa.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Velocity-BPA/n8n-nodes-celo.git"
+  },
+  "homepage": "https://github.com/Velocity-BPA/n8n-nodes-celo#readme",
+  "bugs": {
+    "url": "https://github.com/Velocity-BPA/n8n-nodes-celo/issues"
+  },
+  "keywords": [
+    "n8n",
+    "n8n-community-node-package",
+    "celo",
+    "blockchain",
+    "stablecoin",
+    "cusd",
+    "ceur",
+    "creal",
+    "mento",
+    "defi",
+    "web3",
+    "cryptocurrency",
+    "identity",
+    "attestation",
+    "staking",
+    "governance",
+    "refi"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/CeloApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Celo/Celo.node.js",
+      "dist/nodes/Celo/CeloTrigger.node.js"
+    ]
+  },
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"**/*.ts\"",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist/",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.19",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.1",
+    "gulp": "^4.0.2",
+    "jest": "^29.7.0",
+    "n8n-workflow": "^1.29.1",
+    "prettier": "^3.2.5",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "n8n-workflow": ">=1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
