@@ -8,344 +8,197 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-A comprehensive n8n community node for interacting with the Celo blockchain. Celo is a mobile-first, EVM-compatible blockchain focused on financial inclusion, featuring phone number identity mapping, multiple stablecoins (cUSD, cEUR, cREAL), ultra-low transaction fees, and unique features like paying gas fees in stablecoins.
+This n8n community node provides comprehensive integration with the Celo blockchain platform, featuring 6 essential resources including Accounts, StableTokens, Identity, ValidatorStaking, Governance, and Exchange. Build powerful DeFi workflows, manage mobile-first financial applications, and interact with Celo's carbon-negative blockchain ecosystem directly from your n8n automation workflows.
 
-![n8n](https://img.shields.io/badge/n8n-community--node-orange)
-![Celo](https://img.shields.io/badge/blockchain-Celo-35D07F)
-![TypeScript](https://img.shields.io/badge/typescript-5.x-blue)
+![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
+![Celo](https://img.shields.io/badge/Celo-Blockchain-green)
+![DeFi](https://img.shields.io/badge/DeFi-Compatible-yellow)
+![Mobile First](https://img.shields.io/badge/Mobile-First-purple)
 
 ## Features
 
-- **12 Resource Categories** with 60+ operations for complete Celo blockchain interaction
-- **Multi-Stablecoin Support**: cUSD, cEUR, and cREAL operations
-- **Phone Number Identity**: Look up addresses by phone number hash
-- **Fee Currency**: Pay gas fees in stablecoins instead of CELO
-- **Staking & Governance**: Full validator election and governance participation
-- **Mento Exchange**: Swap between CELO and stablecoins
-- **Multi-Network**: Support for Mainnet, Alfajores (testnet), and Baklava
-- **Poll-Based Triggers**: 6 event types for workflow automation
-- **HTTP-Only**: No external SDK dependencies required
+- **Account Management** - Create, query, and manage Celo accounts with balance tracking and transaction history
+- **StableToken Operations** - Handle cUSD, cEUR, and cREAL stablecoin transfers, minting, and burning operations
+- **Identity Verification** - Manage on-chain identity attestations, phone number verification, and reputation scoring
+- **Validator Staking** - Interact with Celo's proof-of-stake consensus including delegation, rewards, and governance participation
+- **Governance Integration** - Submit proposals, vote on protocol changes, and track governance activity
+- **Exchange Operations** - Execute token swaps, provide liquidity, and access DEX functionality on Celo
+- **Mobile-Optimized** - Built for Celo's mobile-first approach with lightweight operations and efficient gas usage
+- **Carbon Negative** - Leverage Celo's carbon-negative blockchain for environmentally conscious DeFi applications
 
 ## Installation
 
 ### Community Nodes (Recommended)
 
-1. Open your n8n instance
-2. Go to **Settings** > **Community Nodes**
-3. Click **Install**
+1. Open n8n
+2. Go to **Settings** → **Community Nodes**
+3. Click **Install a community node**
 4. Enter `n8n-nodes-celo`
 5. Click **Install**
 
 ### Manual Installation
 
 ```bash
-# Navigate to your n8n installation directory
 cd ~/.n8n
-
-# Install the package
 npm install n8n-nodes-celo
 ```
 
 ### Development Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/Velocity-BPA/n8n-nodes-celo.git
 cd n8n-nodes-celo
-
-# Install dependencies
 npm install
-
-# Build the project
 npm run build
-
-# Link to n8n
 mkdir -p ~/.n8n/custom
 ln -s $(pwd) ~/.n8n/custom/n8n-nodes-celo
-
-# Restart n8n
 n8n start
 ```
 
 ## Credentials Setup
 
-### Celo API Credentials
-
 | Field | Description | Required |
 |-------|-------------|----------|
-| Network | Celo network (Mainnet/Alfajores/Baklava/Custom) | Yes |
-| RPC Endpoint | JSON-RPC endpoint URL | Yes (auto-filled by network) |
-| Private Key | Account private key for transactions | No |
-| Celoscan API Key | API key for enhanced explorer features | No |
-
-#### Default RPC Endpoints
-
-| Network | RPC URL | Chain ID |
-|---------|---------|----------|
-| Mainnet | https://forno.celo.org | 42220 |
-| Alfajores | https://alfajores-forno.celo-testnet.org | 44787 |
-| Baklava | https://baklava-forno.celo-testnet.org | 62320 |
+| API Key | Your Celo API key for authentication | Yes |
+| Network | Celo network (mainnet, alfajores, baklava) | Yes |
+| RPC URL | Custom RPC endpoint URL (optional) | No |
+| Private Key | Account private key for transaction signing | No |
+| Testnet Mode | Enable for development and testing | No |
 
 ## Resources & Operations
 
-### Accounts
+### 1. Accounts
+
 | Operation | Description |
 |-----------|-------------|
-| Get Balance | Get CELO balance for an address |
-| Get Stable Balance | Get cUSD/cEUR/cREAL balance |
-| Get All Balances | Get all token balances at once |
-| Get Transaction History | Retrieve account transactions |
-| Get Token Transfers | Get ERC20 transfer history |
-| Get Phone Number Mapping | Look up identity attestations |
+| Get Account | Retrieve account details including balances and metadata |
+| Create Account | Generate new Celo account with private/public key pair |
+| Get Balance | Check CELO and stablecoin balances for specific account |
+| Get Transaction History | Fetch historical transactions for an account |
+| Send Transaction | Execute CELO transfers between accounts |
+| Estimate Gas | Calculate gas costs for pending transactions |
 
-### Transactions
+### 2. StableTokens
+
 | Operation | Description |
 |-----------|-------------|
-| Get Transaction | Get transaction details by hash |
-| Get Transaction Receipt | Get transaction receipt with logs |
-| Send Transaction | Submit a signed transaction |
-| Send Stable Payment | Pay using stablecoins with fee currency |
-| Estimate Gas | Estimate gas for a transaction |
-| Get Fee Currency | Get supported fee payment tokens |
+| Transfer | Send cUSD, cEUR, or cREAL between accounts |
+| Get Balance | Check stablecoin balances across all denominations |
+| Mint | Create new stablecoin tokens (authorized accounts only) |
+| Burn | Destroy stablecoin tokens to maintain price stability |
+| Get Total Supply | Retrieve total supply for each stablecoin |
+| Get Exchange Rate | Fetch current exchange rates between stablecoins |
 
-### Identity (Attestations)
+### 3. Identity
+
 | Operation | Description |
 |-----------|-------------|
-| Lookup Identifier | Find addresses by phone hash |
-| Get Attestations | Get identity proofs for address |
-| Get Verified Addresses | Get addresses for identifier |
-| Request Attestation | Start verification process |
-| Complete Attestation | Finish verification |
+| Verify Phone | Initiate phone number verification process |
+| Get Attestations | Retrieve identity attestations for an account |
+| Request Attestation | Request new identity verification from validators |
+| Complete Attestation | Finalize attestation process with verification code |
+| Get Reputation Score | Calculate reputation based on verified attestations |
+| Revoke Attestation | Remove previously issued attestation |
 
-### Stablecoins (Mento)
+### 4. ValidatorStaking
+
 | Operation | Description |
 |-----------|-------------|
-| Get Exchange Rate | Get CELO/stablecoin exchange rate |
-| Exchange | Swap CELO ↔ stablecoin |
-| Get Bucket Sizes | Get reserve bucket information |
-| Get Spread | Get trading spread |
-| Get Reserve Ratio | Get backing ratio |
+| Get Validators | List all registered validators with performance metrics |
+| Delegate Stake | Delegate CELO tokens to validator for staking rewards |
+| Undelegate Stake | Remove delegated stake from validator |
+| Claim Rewards | Collect accumulated staking rewards |
+| Get Delegation | Check delegation status and reward amounts |
+| Register Validator | Register new validator node (requires minimum stake) |
 
-### Staking (Election)
+### 5. Governance
+
 | Operation | Description |
 |-----------|-------------|
-| Get Validators | Get active validators |
-| Get Validator Groups | Get validator groups |
-| Get Votes | Get vote distribution |
-| Vote For Group | Cast vote for validator group |
-| Revoke Votes | Remove votes from a group |
-| Get Pending Votes | Get votes in-flight |
-| Get Rewards | Get staking rewards |
-| Activate Votes | Activate after lockup |
+| Get Proposals | List all governance proposals with status and details |
+| Submit Proposal | Create new governance proposal for protocol changes |
+| Vote | Cast vote on active governance proposals |
+| Get Votes | Retrieve voting history and results |
+| Execute Proposal | Execute approved governance proposal |
+| Get Voter Info | Check voting power and participation history |
 
-### Locked CELO
+### 6. Exchange
+
 | Operation | Description |
 |-----------|-------------|
-| Get Locked Balance | Get locked CELO amount |
-| Lock CELO | Create a new lock |
-| Unlock CELO | Request unlock |
-| Withdraw | Withdraw after unlock period |
-| Get Pending Withdrawals | Get queued withdrawals |
-
-### Governance
-| Operation | Description |
-|-----------|-------------|
-| Get Proposals | Get active governance proposals |
-| Get Proposal | Get single proposal details |
-| Vote On Proposal | Cast governance vote |
-| Get Vote Record | Get voting history |
-| Get Constitution | Get governance parameters |
-
-### Reserve
-| Operation | Description |
-|-----------|-------------|
-| Get Reserve Balance | Get multi-asset reserve balance |
-| Get Reserve Ratio | Get reserve health metrics |
-| Get Reserve Assets | Get reserve composition |
-| Get Tobins Tax | Get trading fee rate |
-
-### Smart Contracts
-| Operation | Description |
-|-----------|-------------|
-| Read Contract | Call view/pure functions |
-| Write Contract | Send transaction to contract |
-| Get Contract Events | Get event logs |
-
-### Tokens
-| Operation | Description |
-|-----------|-------------|
-| Get Token Info | Get ERC20 token details |
-| Get Token Holders | Get holder list (requires Celoscan) |
-| Get Token Transfers | Get transfer history |
-
-### Network
-| Operation | Description |
-|-----------|-------------|
-| Get Epoch Info | Get current epoch details |
-| Get Gas Price | Get current gas price |
-| Get Network Stats | Get chain metrics |
-| Get Elected Validators | Get current validator set |
-
-### Utility
-| Operation | Description |
-|-----------|-------------|
-| Convert Units | CELO/Wei conversion |
-| Hash Identifier | Create phone number hash |
-| Get Fee Currency Options | Get tokens for gas payment |
-| Get API Health | Check service status |
-
-## Trigger Node
-
-The Celo Trigger node provides poll-based event monitoring:
-
-| Trigger | Description |
-|---------|-------------|
-| New Transaction To Address | Monitor address for incoming transactions |
-| Token Transfer | Track ERC20 token transfers |
-| Governance Proposal | New proposal created |
-| Validator Election | Epoch changes and elections |
-| Staking Reward | Reward distribution events |
-| Stablecoin Exchange | Mento exchange events |
-
-### Trigger Configuration
-
-| Field | Description | Default |
-|-------|-------------|---------|
-| Poll Interval | How often to check for events | 60 seconds |
-| Address | Address to monitor | Required |
-| Token Address | Token to track (for token transfer) | Optional |
-| Start Block | Block to start from | Latest |
+| Swap Tokens | Exchange between CELO and stablecoins |
+| Get Quote | Calculate swap rates and fees |
+| Add Liquidity | Provide liquidity to exchange pools |
+| Remove Liquidity | Withdraw liquidity and collect fees |
+| Get Pool Info | Retrieve liquidity pool statistics |
+| Get Trading History | Fetch historical trades and volume data |
 
 ## Usage Examples
 
-### Get Account Balances
-
 ```javascript
-// Workflow: Get all balances for an address
-// Node: Celo
-// Resource: Accounts
-// Operation: Get All Balances
-// Address: 0x...
-
-// Returns:
+// Transfer cUSD stablecoins
 {
-  "celo": "10.5",
-  "cusd": "100.25",
-  "ceur": "50.0",
-  "creal": "0"
+  "resource": "StableTokens",
+  "operation": "Transfer",
+  "to": "0x742d35Cc6634C0532925a3b8D400e9024C4d45e4",
+  "amount": "100.50",
+  "token": "cUSD",
+  "memo": "Payment for services"
 }
 ```
 
-### Look Up Phone Number
-
 ```javascript
-// Workflow: Find address by phone number
-// Node: Celo
-// Resource: Identity
-// Operation: Lookup Identifier
-// Phone Number: +1234567890
-// Country Code: US
-
-// Returns addresses associated with the phone number
+// Delegate CELO to validator
+{
+  "resource": "ValidatorStaking",
+  "operation": "Delegate Stake",
+  "validator": "0x8b7649116f169d2d2aebb6ea1a77f0bfb97e1285",
+  "amount": "1000",
+  "lockupPeriod": "180"
+}
 ```
 
-### Exchange CELO for cUSD
-
 ```javascript
-// Workflow: Swap CELO to stablecoin
-// Node: Celo
-// Resource: Stablecoins
-// Operation: Exchange
-// From: CELO
-// To: cUSD
-// Amount: 10
-
-// Returns exchange transaction details
+// Vote on governance proposal
+{
+  "resource": "Governance",
+  "operation": "Vote",
+  "proposalId": "42",
+  "vote": "Yes",
+  "weight": "500.75"
+}
 ```
 
-### Monitor Incoming Transactions
-
 ```javascript
-// Workflow: Trigger on new transactions
-// Node: Celo Trigger
-// Event: New Transaction To Address
-// Address: 0x...
-// Poll Interval: 30 seconds
-
-// Triggers workflow when new transactions arrive
+// Verify phone number for identity
+{
+  "resource": "Identity",
+  "operation": "Verify Phone",
+  "phoneNumber": "+1234567890",
+  "account": "0x742d35Cc6634C0532925a3b8D400e9024C4d45e4"
+}
 ```
-
-## Celo Concepts
-
-| Concept | Description |
-|---------|-------------|
-| **CELO** | Native staking and governance token |
-| **cUSD/cEUR/cREAL** | Mento algorithmic stablecoins pegged to USD, EUR, BRL |
-| **Mento** | Stability mechanism for Celo stablecoins |
-| **Attestation** | Phone number identity proof via decentralized verification |
-| **Epoch** | Validator election period (~1 day) |
-| **Validator Group** | Collective of up to 5 validators |
-| **Locked CELO** | CELO locked for staking/governance participation |
-| **Reserve** | Multi-asset backing for stablecoins |
-| **Forno** | Celo's public RPC service |
-| **Fee Currency** | Pay gas in stablecoins instead of CELO |
-
-## Networks
-
-| Network | Purpose | Explorer |
-|---------|---------|----------|
-| **Mainnet** | Production network | https://celoscan.io |
-| **Alfajores** | Primary testnet | https://alfajores.celoscan.io |
-| **Baklava** | Validator testing | https://baklava.celoscan.io |
-
-### Getting Test CELO
-
-1. Visit the [Alfajores Faucet](https://faucet.celo.org)
-2. Enter your address
-3. Receive test CELO and stablecoins
 
 ## Error Handling
 
-The node provides descriptive error messages:
-
-| Error | Cause | Solution |
-|-------|-------|----------|
-| Invalid address | Malformed Ethereum address | Check address format (0x + 40 hex chars) |
-| Insufficient balance | Not enough tokens | Check balance before transaction |
-| RPC error | Network connectivity | Verify RPC endpoint and network |
-| Private key required | Missing credentials | Add private key for write operations |
-
-## Security Best Practices
-
-1. **Never share private keys** - Use environment variables or n8n credentials
-2. **Use testnets first** - Test on Alfajores before mainnet
-3. **Validate addresses** - Double-check recipient addresses
-4. **Monitor transactions** - Use triggers to track activity
-5. **Limit permissions** - Use separate accounts for automation
+| Error | Description | Solution |
+|-------|-------------|----------|
+| Insufficient Balance | Account lacks funds for transaction | Check account balance and add funds |
+| Invalid Network | Network parameter not recognized | Use mainnet, alfajores, or baklava |
+| Gas Estimation Failed | Cannot calculate transaction gas costs | Check network connectivity and try again |
+| Attestation Expired | Identity verification code expired | Request new attestation code |
+| Proposal Not Found | Governance proposal ID invalid | Verify proposal exists and is active |
+| Validator Inactive | Selected validator not accepting delegations | Choose different active validator |
 
 ## Development
 
 ```bash
-# Install dependencies
 npm install
-
-# Build the project
 npm run build
-
-# Run tests
 npm test
-
-# Run tests with coverage
-npm run test:coverage
-
-# Lint code
 npm run lint
-
-# Fix lint issues
-npm run lint:fix
-
-# Watch mode for development
 npm run dev
 ```
 
@@ -363,36 +216,24 @@ This n8n community node is licensed under the **Business Source License 1.1**.
 Permitted for personal, educational, research, and internal business use.
 
 ### Commercial Use
-Use of this node within any SaaS, PaaS, hosted platform, managed service,
-or paid automation offering requires a commercial license.
+Use of this node within any SaaS, PaaS, hosted platform, managed service, or paid automation offering requires a commercial license.
 
-For licensing inquiries:
-**licensing@velobpa.com**
+For licensing inquiries: **licensing@velobpa.com**
 
 See [LICENSE](LICENSE), [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md), and [LICENSING_FAQ.md](LICENSING_FAQ.md) for details.
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are welcome! Please ensure:
 
-Please ensure your code:
-- Passes all tests
-- Follows the existing code style
-- Includes appropriate documentation
-- Maintains BSL 1.1 licensing
+1. Code follows existing style conventions
+2. All tests pass (`npm test`)
+3. Linting passes (`npm run lint`)
+4. Documentation is updated for new features
+5. Commit messages are descriptive
 
 ## Support
 
-- **Documentation**: [Celo Docs](https://docs.celo.org)
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-celo/issues)
-- **n8n Community**: [n8n Community Forum](https://community.n8n.io)
-
-## Acknowledgments
-
-- [Celo Foundation](https://celo.org) for the blockchain platform
-- [n8n](https://n8n.io) for the workflow automation platform
-- [Celoscan](https://celoscan.io) for the block explorer API
+- **Celo Documentation**: [docs.celo.org](https://docs.celo.org)
+- **Celo Community**: [forum.celo.org](https://forum.celo.org)
