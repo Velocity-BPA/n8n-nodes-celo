@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 Velocity BPA, LLC
+ * Licensed under the Business Source License 1.1
+ */
+
 const { src, dest } = require('gulp');
 
 function buildIcons() {
