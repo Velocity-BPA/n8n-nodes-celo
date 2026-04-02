@@ -1,27 +1,22 @@
-import { ICredentialType, INodeProperties } from 'n8n-workflow';
+import {
+	ICredentialType,
+	INodeProperties,
+} from 'n8n-workflow';
 
 export class CeloApi implements ICredentialType {
 	name = 'celoApi';
 	displayName = 'Celo API';
-	documentationUrl = 'https://docs.celo.org';
+	documentationUrl = 'https://docs.celo.org/developer/forno';
 	properties: INodeProperties[] = [
 		{
-			displayName: 'RPC Endpoint URL',
-			name: 'rpcUrl',
-			type: 'string',
-			default: 'https://forno.celo.org',
-			required: true,
-			description: 'The Celo RPC endpoint URL. Use https://forno.celo.org for mainnet or custom endpoint.',
-		},
-		{
-			displayName: 'Private Key',
-			name: 'privateKey',
+			displayName: 'API Key',
+			name: 'apiKey',
 			type: 'string',
 			typeOptions: {
 				password: true,
 			},
 			default: '',
-			description: 'Private key for signing transactions (optional, only needed for write operations)',
+			description: 'API key for Celo Forno service',
 		},
 		{
 			displayName: 'Network',
@@ -37,12 +32,19 @@ export class CeloApi implements ICredentialType {
 					value: 'alfajores',
 				},
 				{
-					name: 'Custom',
-					value: 'custom',
+					name: 'Baklava Testnet',
+					value: 'baklava',
 				},
 			],
 			default: 'mainnet',
 			description: 'The Celo network to connect to',
+		},
+		{
+			displayName: 'Base URL',
+			name: 'baseUrl',
+			type: 'string',
+			default: 'https://forno.celo.org',
+			description: 'Base URL for the Celo API endpoint',
 		},
 	];
 }
