@@ -52,6 +52,34 @@ export class Celo implements INodeType {
         noDataExpression: true,
         options: [
           {
+            name: 'Account',
+            value: 'account',
+          },
+          {
+            name: 'Transaction',
+            value: 'transaction',
+          },
+          {
+            name: 'Block',
+            value: 'block',
+          },
+          {
+            name: 'Validator',
+            value: 'validator',
+          },
+          {
+            name: 'Governance',
+            value: 'governance',
+          },
+          {
+            name: 'StableCoin',
+            value: 'stableCoin',
+          },
+          {
+            name: 'Identity',
+            value: 'identity',
+          },
+          {
             name: 'Accounts',
             value: 'accounts',
           },
@@ -60,25 +88,253 @@ export class Celo implements INodeType {
             value: 'stableTokens',
           },
           {
-            name: 'Identity',
-            value: 'identity',
-          },
-          {
             name: 'ValidatorStaking',
             value: 'validatorStaking',
-          },
-          {
-            name: 'Governance',
-            value: 'governance',
           },
           {
             name: 'Exchange',
             value: 'exchange',
           }
         ],
-        default: 'accounts',
+        default: 'account',
       },
       // Operation dropdowns per resource
+{
+	displayName: 'Operation',
+	name: 'operation',
+	type: 'options',
+	noDataExpression: true,
+	displayOptions: {
+		show: {
+			resource: ['account'],
+		},
+	},
+	options: [
+		{
+			name: 'Get Balance',
+			value: 'getBalance',
+			description: 'Get account balance for CELO or cToken',
+			action: 'Get account balance',
+		},
+		{
+			name: 'Get Transaction Count',
+			value: 'getTransactionCount',
+			description: 'Get transaction count (nonce) for account',
+			action: 'Get transaction count',
+		},
+		{
+			name: 'Get Code',
+			value: 'getCode',
+			description: 'Get contract code at address',
+			action: 'Get contract code',
+		},
+		{
+			name: 'List Accounts',
+			value: 'listAccounts',
+			description: 'List available accounts',
+			action: 'List accounts',
+		},
+		{
+			name: 'Call Contract',
+			value: 'callContract',
+			description: 'Execute contract call without creating transaction',
+			action: 'Call contract',
+		},
+	],
+	default: 'getBalance',
+},
+{
+	displayName: 'Operation',
+	name: 'operation',
+	type: 'options',
+	noDataExpression: true,
+	displayOptions: {
+		show: {
+			resource: ['transaction'],
+		},
+	},
+	options: [
+		{
+			name: 'Send Transaction',
+			value: 'sendTransaction',
+			description: 'Send a transaction to the Celo network',
+			action: 'Send transaction',
+		},
+		{
+			name: 'Send Raw Transaction',
+			value: 'sendRawTransaction',
+			description: 'Send a signed raw transaction',
+			action: 'Send raw transaction',
+		},
+		{
+			name: 'Get Transaction',
+			value: 'getTransaction',
+			description: 'Get transaction details by hash',
+			action: 'Get transaction',
+		},
+		{
+			name: 'Get Transaction by Hash',
+			value: 'getTransactionByHash',
+			description: 'Get transaction by hash',
+			action: 'Get transaction by hash',
+		},
+		{
+			name: 'Get Transaction Receipt',
+			value: 'getTransactionReceipt',
+			description: 'Get transaction receipt',
+			action: 'Get transaction receipt',
+		},
+		{
+			name: 'Estimate Gas',
+			value: 'estimateGas',
+			description: 'Estimate gas required for transaction',
+			action: 'Estimate gas',
+		},
+		{
+			name: 'Get Gas Price',
+			value: 'getGasPrice',
+			description: 'Get current gas price',
+			action: 'Get gas price',
+		},
+	],
+	default: 'sendTransaction',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['block'] } },
+  options: [
+    { name: 'Get Block by Number', value: 'getBlockByNumber', description: 'Get block by number', action: 'Get block by number' },
+    { name: 'Get Block by Hash', value: 'getBlockByHash', description: 'Get block by hash', action: 'Get block by hash' },
+    { name: 'Get Latest Block Number', value: 'getLatestBlock', description: 'Get latest block number', action: 'Get latest block number' },
+    { name: 'Get Block Transaction Count', value: 'getBlockTransactionCount', description: 'Get transaction count in block', action: 'Get block transaction count' },
+    { name: 'Get Uncle Block Information', value: 'getUncle', description: 'Get uncle block information', action: 'Get uncle block information' }
+  ],
+  default: 'getBlockByNumber',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['validator'] } },
+  options: [
+    { name: 'Get Validators', value: 'getValidators', description: 'Get list of active validators', action: 'Get validators' },
+    { name: 'Get Validator Group', value: 'getValidatorGroup', description: 'Get validator group information', action: 'Get validator group' },
+    { name: 'Get Votes For Validator Group', value: 'getVotesForValidatorGroup', description: 'Get votes for validator group', action: 'Get votes for validator group' },
+    { name: 'Is Validator', value: 'isValidator', description: 'Check if address is a validator', action: 'Check if validator' },
+    { name: 'Get Validator Rewards', value: 'getValidatorRewards', description: 'Get validator rewards information', action: 'Get validator rewards' },
+  ],
+  default: 'getValidators',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['governance'] } },
+  options: [
+    { name: 'Get Proposals', value: 'getProposals', description: 'Get governance proposals', action: 'Get governance proposals' },
+    { name: 'Get Proposal', value: 'getProposal', description: 'Get specific proposal details', action: 'Get specific proposal details' },
+    { name: 'Get Votes', value: 'getVotes', description: 'Get votes for proposal', action: 'Get votes for proposal' },
+    { name: 'Is Voting', value: 'isVoting', description: 'Check voting status', action: 'Check voting status' },
+    { name: 'Vote', value: 'vote', description: 'Vote on governance proposal', action: 'Vote on governance proposal' },
+    {
+      name: 'Propose',
+      value: 'propose',
+      description: 'Submit a governance proposal',
+      action: 'Submit governance proposal',
+    },
+    {
+      name: 'Execute',
+      value: 'execute',
+      description: 'Execute approved proposal',
+      action: 'Execute approved proposal',
+    },
+    {
+      name: 'Get Vote Record',
+      value: 'getVoteRecord',
+      description: 'Get voting record for address',
+      action: 'Get voting record',
+    },
+    {
+      name: 'Get Queue',
+      value: 'getQueue',
+      description: 'Get queued proposals',
+      action: 'Get queued proposals',
+    },
+    {
+      name: 'Upvote',
+      value: 'upvote',
+      description: 'Upvote proposal in queue',
+      action: 'Upvote proposal in queue',
+    },
+  ],
+  default: 'getProposals',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['stableCoin'] } },
+  options: [
+    { name: 'Get StableCoin Balance', value: 'getStableCoinBalance', description: 'Get stablecoin balance', action: 'Get stablecoin balance' },
+    { name: 'Get Exchange Rate', value: 'getExchangeRate', description: 'Get exchange rate between CELO and stablecoins', action: 'Get exchange rate' },
+    { name: 'Mint StableCoin', value: 'mintStableCoin', description: 'Mint stablecoins through Mento', action: 'Mint stablecoin' },
+    { name: 'Burn StableCoin', value: 'burnStableCoin', description: 'Burn stablecoins', action: 'Burn stablecoin' },
+    { name: 'Get StableCoin Supply', value: 'getStableCoinSupply', description: 'Get total supply of stablecoin', action: 'Get stablecoin supply' },
+    { name: 'Transfer StableCoin', value: 'transferStableCoin', description: 'Transfer stablecoins', action: 'Transfer stablecoin' }
+  ],
+  default: 'getStableCoinBalance',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['identity'] } },
+  options: [
+    { name: 'Get Attestations', value: 'getAttestations', description: 'Get attestation status for identifier', action: 'Get attestations' },
+    { name: 'Get Identifier Status', value: 'getIdentifierStatus', description: 'Check verification status of phone/email', action: 'Get identifier status' },
+    { name: 'Request Attestation', value: 'requestAttestation', description: 'Request identity attestation', action: 'Request attestation' },
+    { name: 'Complete Attestation', value: 'completeAttestation', description: 'Complete attestation process', action: 'Complete attestation' },
+    { name: 'Get Attestation Issuers', value: 'getAttestationIssuers', description: 'Get list of attestation issuers', action: 'Get attestation issuers' },
+    {
+      name: 'Request Attestations',
+      value: 'requestAttestations',
+      description: 'Request phone number attestations',
+      action: 'Request phone number attestations',
+    },
+    {
+      name: 'Select Issuers',
+      value: 'selectIssuers',
+      description: 'Select attestation issuers',
+      action: 'Select attestation issuers',
+    },
+    {
+      name: 'Complete Attestations',
+      value: 'completeAttestations',
+      description: 'Complete attestation process',
+      action: 'Complete attestation process',
+    },
+    {
+      name: 'Get Account Metadata',
+      value: 'getAccountMetadata',
+      description: 'Get account metadata claims',
+      action: 'Get account metadata claims',
+    },
+    {
+      name: 'Set Account Metadata',
+      value: 'setAccountMetadata',
+      description: 'Set account metadata',
+      action: 'Set account metadata',
+    },
+  ],
+  default: 'getAttestations',
+},
 {
   displayName: 'Operation',
   name: 'operation',
@@ -180,56 +436,6 @@ export class Celo implements INodeType {
   noDataExpression: true,
   displayOptions: {
     show: {
-      resource: ['identity'],
-    },
-  },
-  options: [
-    {
-      name: 'Request Attestations',
-      value: 'requestAttestations',
-      description: 'Request phone number attestations',
-      action: 'Request phone number attestations',
-    },
-    {
-      name: 'Select Issuers',
-      value: 'selectIssuers',
-      description: 'Select attestation issuers',
-      action: 'Select attestation issuers',
-    },
-    {
-      name: 'Complete Attestations',
-      value: 'completeAttestations',
-      description: 'Complete attestation process',
-      action: 'Complete attestation process',
-    },
-    {
-      name: 'Get Attestations',
-      value: 'getAttestations',
-      description: 'Get attestation status',
-      action: 'Get attestation status',
-    },
-    {
-      name: 'Get Account Metadata',
-      value: 'getAccountMetadata',
-      description: 'Get account metadata claims',
-      action: 'Get account metadata claims',
-    },
-    {
-      name: 'Set Account Metadata',
-      value: 'setAccountMetadata',
-      description: 'Set account metadata',
-      action: 'Set account metadata',
-    },
-  ],
-  default: 'requestAttestations',
-},
-{
-  displayName: 'Operation',
-  name: 'operation',
-  type: 'options',
-  noDataExpression: true,
-  displayOptions: {
-    show: {
       resource: ['validatorStaking'],
     },
   },
@@ -292,68 +498,6 @@ export class Celo implements INodeType {
   noDataExpression: true,
   displayOptions: {
     show: {
-      resource: ['governance'],
-    },
-  },
-  options: [
-    {
-      name: 'Propose',
-      value: 'propose',
-      description: 'Submit a governance proposal',
-      action: 'Submit governance proposal',
-    },
-    {
-      name: 'Vote',
-      value: 'vote',
-      description: 'Vote on a governance proposal',
-      action: 'Vote on governance proposal',
-    },
-    {
-      name: 'Get Proposal',
-      value: 'getProposal',
-      description: 'Get proposal details',
-      action: 'Get proposal details',
-    },
-    {
-      name: 'Get Proposals',
-      value: 'getProposals',
-      description: 'Get all proposals with status',
-      action: 'Get all proposals',
-    },
-    {
-      name: 'Execute',
-      value: 'execute',
-      description: 'Execute approved proposal',
-      action: 'Execute approved proposal',
-    },
-    {
-      name: 'Get Vote Record',
-      value: 'getVoteRecord',
-      description: 'Get voting record for address',
-      action: 'Get voting record',
-    },
-    {
-      name: 'Get Queue',
-      value: 'getQueue',
-      description: 'Get queued proposals',
-      action: 'Get queued proposals',
-    },
-    {
-      name: 'Upvote',
-      value: 'upvote',
-      description: 'Upvote proposal in queue',
-      action: 'Upvote proposal in queue',
-    },
-  ],
-  default: 'propose',
-},
-{
-  displayName: 'Operation',
-  name: 'operation',
-  type: 'options',
-  noDataExpression: true,
-  displayOptions: {
-    show: {
       resource: ['exchange'],
     },
   },
@@ -398,6 +542,506 @@ export class Celo implements INodeType {
   default: 'exchange',
 },
       // Parameter definitions
+{
+	displayName: 'Address',
+	name: 'address',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['account'],
+			operation: ['getBalance', 'getTransactionCount', 'getCode'],
+		},
+	},
+	default: '',
+	description: 'The account address',
+},
+{
+	displayName: 'Block Number',
+	name: 'blockNumber',
+	type: 'options',
+	displayOptions: {
+		show: {
+			resource: ['account'],
+			operation: ['getBalance', 'getTransactionCount', 'getCode', 'callContract'],
+		},
+	},
+	options: [
+		{
+			name: 'Latest',
+			value: 'latest',
+		},
+		{
+			name: 'Earliest',
+			value: 'earliest',
+		},
+		{
+			name: 'Pending',
+			value: 'pending',
+		},
+		{
+			name: 'Custom',
+			value: 'custom',
+		},
+	],
+	default: 'latest',
+	description: 'Block parameter',
+},
+{
+	displayName: 'Custom Block Number',
+	name: 'customBlockNumber',
+	type: 'string',
+	displayOptions: {
+		show: {
+			resource: ['account'],
+			operation: ['getBalance', 'getTransactionCount', 'getCode', 'callContract'],
+			blockNumber: ['custom'],
+		},
+	},
+	default: '',
+	description: 'Custom block number (hex format, e.g., 0x1b4)',
+},
+{
+	displayName: 'Transaction',
+	name: 'transaction',
+	type: 'json',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['account'],
+			operation: ['callContract'],
+		},
+	},
+	default: '{}',
+	description: 'Transaction object with to, data, from, gas, gasPrice, value fields',
+},
+{
+	displayName: 'Transaction Object',
+	name: 'transaction',
+	type: 'json',
+	displayOptions: {
+		show: {
+			resource: ['transaction'],
+			operation: ['sendTransaction'],
+		},
+	},
+	default: '{}',
+	description: 'Transaction object with to, value, data, gas, gasPrice fields',
+	required: true,
+},
+{
+	displayName: 'Raw Transaction Data',
+	name: 'data',
+	type: 'string',
+	displayOptions: {
+		show: {
+			resource: ['transaction'],
+			operation: ['sendRawTransaction'],
+		},
+	},
+	default: '',
+	description: 'Signed raw transaction data',
+	required: true,
+},
+{
+	displayName: 'Transaction Hash',
+	name: 'transactionHash',
+	type: 'string',
+	displayOptions: {
+		show: {
+			resource: ['transaction'],
+			operation: ['getTransaction', 'getTransactionReceipt'],
+		},
+	},
+	default: '',
+	description: 'Transaction hash to query',
+	required: true,
+},
+{
+	displayName: 'Hash',
+	name: 'hash',
+	type: 'string',
+	displayOptions: {
+		show: {
+			resource: ['transaction'],
+			operation: ['getTransactionByHash'],
+		},
+	},
+	default: '',
+	description: 'Transaction hash to query',
+	required: true,
+},
+{
+	displayName: 'Transaction Object',
+	name: 'transaction',
+	type: 'json',
+	displayOptions: {
+		show: {
+			resource: ['transaction'],
+			operation: ['estimateGas'],
+		},
+	},
+	default: '{}',
+	description: 'Transaction object to estimate gas for',
+	required: true,
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockByNumber']
+    }
+  },
+  default: 'latest',
+  description: 'The block number in hex format or "latest", "earliest", "pending"'
+},
+{
+  displayName: 'Full Transactions',
+  name: 'fullTransactions',
+  type: 'boolean',
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockByNumber']
+    }
+  },
+  default: false,
+  description: 'Whether to return full transaction objects or just hashes'
+},
+{
+  displayName: 'Block Hash',
+  name: 'blockHash',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockByHash']
+    }
+  },
+  default: '',
+  description: 'The hash of the block'
+},
+{
+  displayName: 'Full Transactions',
+  name: 'fullTransactions',
+  type: 'boolean',
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockByHash']
+    }
+  },
+  default: false,
+  description: 'Whether to return full transaction objects or just hashes'
+},
+{
+  displayName: 'Block Hash',
+  name: 'blockHash',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockTransactionCount']
+    }
+  },
+  default: '',
+  description: 'The hash of the block'
+},
+{
+  displayName: 'Block Hash',
+  name: 'blockHash',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getUncle']
+    }
+  },
+  default: '',
+  description: 'The hash of the block'
+},
+{
+  displayName: 'Index',
+  name: 'index',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getUncle']
+    }
+  },
+  default: '0x0',
+  description: 'The uncle index position in hex format'
+},
+{
+  displayName: 'Contract Call Data',
+  name: 'contractCall',
+  type: 'string',
+  required: true,
+  displayOptions: { 
+    show: { 
+      resource: ['validator'], 
+      operation: ['getValidators', 'getValidatorGroup', 'getVotesForValidatorGroup', 'isValidator', 'getValidatorRewards'] 
+    } 
+  },
+  default: '',
+  description: 'Encoded contract call data',
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  displayOptions: { 
+    show: { 
+      resource: ['validator'], 
+      operation: ['getValidators', 'getValidatorGroup', 'getVotesForValidatorGroup', 'isValidator', 'getValidatorRewards'] 
+    } 
+  },
+  default: 'latest',
+  description: 'Block number to query (latest, earliest, pending, or hex number)',
+},
+{
+  displayName: 'To Address',
+  name: 'toAddress',
+  type: 'string',
+  required: true,
+  displayOptions: { 
+    show: { 
+      resource: ['validator'], 
+      operation: ['getValidators', 'getValidatorGroup', 'getVotesForValidatorGroup', 'isValidator', 'getValidatorRewards'] 
+    } 
+  },
+  default: '',
+  description: 'Contract address to call',
+},
+{
+  displayName: 'Validator Address',
+  name: 'validatorAddress',
+  type: 'string',
+  displayOptions: { 
+    show: { 
+      resource: ['validator'], 
+      operation: ['getValidatorGroup', 'isValidator'] 
+    } 
+  },
+  default: '',
+  description: 'Address of the validator to query',
+},
+{
+  displayName: 'Group Address',
+  name: 'groupAddress',
+  type: 'string',
+  displayOptions: { 
+    show: { 
+      resource: ['validator'], 
+      operation: ['getVotesForValidatorGroup'] 
+    } 
+  },
+  default: '',
+  description: 'Address of the validator group to query votes for',
+},
+{
+  displayName: 'Contract Call',
+  name: 'contractCall',
+  type: 'json',
+  required: true,
+  default: '{}',
+  displayOptions: {
+    show: {
+      resource: ['governance'],
+      operation: ['getProposals', 'getProposal', 'getVotes', 'isVoting'],
+    },
+  },
+  description: 'Contract call parameters including to, data, and from addresses',
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  default: 'latest',
+  displayOptions: {
+    show: {
+      resource: ['governance'],
+      operation: ['getProposals', 'getProposal', 'getVotes', 'isVoting'],
+    },
+  },
+  description: 'Block number or "latest" for the most recent block',
+},
+{
+  displayName: 'Transaction',
+  name: 'transaction',
+  type: 'json',
+  required: true,
+  default: '{}',
+  displayOptions: {
+    show: {
+      resource: ['governance'],
+      operation: ['vote'],
+    },
+  },
+  description: 'Transaction parameters including to, data, from, gas, and gasPrice',
+},
+{
+  displayName: 'Network',
+  name: 'network',
+  type: 'options',
+  options: [
+    { name: 'Mainnet', value: 'mainnet' },
+    { name: 'Alfajores Testnet', value: 'alfajores' },
+  ],
+  default: 'mainnet',
+  displayOptions: {
+    show: {
+      resource: ['governance'],
+    },
+  },
+  description: 'Celo network to use',
+},
+{
+  displayName: 'Contract Call',
+  name: 'contractCall',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['stableCoin'], operation: ['getStableCoinBalance'] } },
+  default: '{"to":"","data":""}',
+  description: 'Contract call parameters for balance query'
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  required: false,
+  displayOptions: { show: { resource: ['stableCoin'], operation: ['getStableCoinBalance'] } },
+  default: 'latest',
+  description: 'Block number to query (latest, pending, or hex number)'
+},
+{
+  displayName: 'Contract Call',
+  name: 'contractCall',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['stableCoin'], operation: ['getExchangeRate'] } },
+  default: '{"to":"","data":""}',
+  description: 'Contract call parameters for exchange rate query'
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  required: false,
+  displayOptions: { show: { resource: ['stableCoin'], operation: ['getExchangeRate'] } },
+  default: 'latest',
+  description: 'Block number to query (latest, pending, or hex number)'
+},
+{
+  displayName: 'Transaction',
+  name: 'transaction',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['stableCoin'], operation: ['mintStableCoin'] } },
+  default: '{"from":"","to":"","data":"","gas":"","gasPrice":""}',
+  description: 'Transaction parameters for minting stablecoins'
+},
+{
+  displayName: 'Transaction',
+  name: 'transaction',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['stableCoin'], operation: ['burnStableCoin'] } },
+  default: '{"from":"","to":"","data":"","gas":"","gasPrice":""}',
+  description: 'Transaction parameters for burning stablecoins'
+},
+{
+  displayName: 'Contract Call',
+  name: 'contractCall',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['stableCoin'], operation: ['getStableCoinSupply'] } },
+  default: '{"to":"","data":""}',
+  description: 'Contract call parameters for supply query'
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  required: false,
+  displayOptions: { show: { resource: ['stableCoin'], operation: ['getStableCoinSupply'] } },
+  default: 'latest',
+  description: 'Block number to query (latest, pending, or hex number)'
+},
+{
+  displayName: 'Transaction',
+  name: 'transaction',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['stableCoin'], operation: ['transferStableCoin'] } },
+  default: '{"from":"","to":"","data":"","gas":"","gasPrice":""}',
+  description: 'Transaction parameters for transferring stablecoins'
+},
+{
+  displayName: 'Contract Call',
+  name: 'contractCall',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['identity'], operation: ['getAttestations', 'getIdentifierStatus', 'getAttestationIssuers'] } },
+  default: '{}',
+  description: 'The contract call parameters for the JSON-RPC request',
+  placeholder: '{"to": "0x...", "data": "0x..."}',
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  displayOptions: { show: { resource: ['identity'], operation: ['getAttestations', 'getIdentifierStatus', 'getAttestationIssuers'] } },
+  default: 'latest',
+  description: 'Block number to query. Use "latest" for most recent block.',
+},
+{
+  displayName: 'Transaction',
+  name: 'transaction',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['identity'], operation: ['requestAttestation', 'completeAttestation'] } },
+  default: '{}',
+  description: 'The transaction parameters for sending to the network',
+  placeholder: '{"from": "0x...", "to": "0x...", "data": "0x...", "value": "0x0"}',
+},
+{
+  displayName: 'Network',
+  name: 'network',
+  type: 'options',
+  displayOptions: { show: { resource: ['identity'] } },
+  options: [
+    { name: 'Mainnet', value: 'mainnet' },
+    { name: 'Alfajores Testnet', value: 'alfajores' },
+  ],
+  default: 'mainnet',
+  description: 'The Celo network to use',
+},
+{
+  displayName: 'Gas Limit',
+  name: 'gasLimit',
+  type: 'string',
+  displayOptions: { show: { resource: ['identity'], operation: ['requestAttestation', 'completeAttestation'] } },
+  default: '',
+  description: 'Gas limit for the transaction (optional, will estimate if not provided)',
+},
+{
+  displayName: 'Gas Price',
+  name: 'gasPrice',
+  type: 'string',
+  displayOptions: { show: { resource: ['identity'], operation: ['requestAttestation', 'completeAttestation'] } },
+  default: '',
+  description: 'Gas price for the transaction (optional)',
+},
 {
   displayName: 'Address',
   name: 'address',
@@ -886,7 +1530,7 @@ export class Celo implements INodeType {
   displayOptions: {
     show: {
       resource: ['governance'],
-      operation: ['propose', 'vote', 'execute', 'upvote'],
+      operation: ['propose', 'execute', 'upvote'],
     },
   },
   default: '',
@@ -903,7 +1547,7 @@ export class Celo implements INodeType {
   displayOptions: {
     show: {
       resource: ['governance'],
-      operation: ['vote', 'getProposal', 'execute', 'getVoteRecord', 'upvote'],
+      operation: ['getProposal', 'execute', 'getVoteRecord', 'upvote'],
     },
   },
   default: '',
@@ -1124,16 +1768,26 @@ export class Celo implements INodeType {
     const resource = this.getNodeParameter('resource', 0) as string;
 
     switch (resource) {
+      case 'account':
+        return [await executeAccountOperations.call(this, items)];
+      case 'transaction':
+        return [await executeTransactionOperations.call(this, items)];
+      case 'block':
+        return [await executeBlockOperations.call(this, items)];
+      case 'validator':
+        return [await executeValidatorOperations.call(this, items)];
+      case 'governance':
+        return [await executeGovernanceOperations.call(this, items)];
+      case 'stableCoin':
+        return [await executeStableCoinOperations.call(this, items)];
+      case 'identity':
+        return [await executeIdentityOperations.call(this, items)];
       case 'accounts':
         return [await executeAccountsOperations.call(this, items)];
       case 'stableTokens':
         return [await executeStableTokensOperations.call(this, items)];
-      case 'identity':
-        return [await executeIdentityOperations.call(this, items)];
       case 'validatorStaking':
         return [await executeValidatorStakingOperations.call(this, items)];
-      case 'governance':
-        return [await executeGovernanceOperations.call(this, items)];
       case 'exchange':
         return [await executeExchangeOperations.call(this, items)];
       default:
@@ -1146,1497 +1800,216 @@ export class Celo implements INodeType {
 // Resource Handler Functions
 // ============================================================
 
-async function executeAccountsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
+async function executeAccountOperations(
+	this: IExecuteFunctions,
+	items: INodeExecutionData[],
 ): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('celoApi') as any;
+	const returnData: INodeExecutionData[] = [];
+	const operation = this.getNodeParameter('operation', 0) as string;
+	const credentials = await this.getCredentials('celoApi') as any;
 
-  // Token contract addresses on Celo mainnet
-  const TOKEN_ADDRESSES = {
-    cusd: '0x765DE816845861e75A25fCA122bb6898B8B1282a',
-    ceur: '0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73',
-  };
+	for (let i = 0; i < items.length; i++) {
+		try {
+			let result: any;
+			const baseUrl = credentials.baseUrl || 'https://forno.celo.org';
+			
+			const headers: any = {
+				'Content-Type': 'application/json',
+			};
 
-  function generateRpcId(): number {
-    return Math.floor(Math.random() * 1000000);
-  }
+			if (credentials.apiKey) {
+				headers['Authorization'] = `Bearer ${credentials.apiKey}`;
+			}
 
-  function generateKeyPair(): any {
-    // Simple keypair generation for demo - in production use proper crypto library
-    const privateKey = '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('');
-    const address = '0x' + Array.from({length: 40}, () => Math.floor(Math.random() * 16).toString(16)).join('');
-    return { privateKey, address };
-  }
+			switch (operation) {
+				case 'getBalance': {
+					const address = this.getNodeParameter('address', i) as string;
+					const blockNumber = this.getNodeParameter('blockNumber', i) as string;
+					const customBlockNumber = this.getNodeParameter('customBlockNumber', i, '') as string;
+					
+					const blockParam = blockNumber === 'custom' ? customBlockNumber : blockNumber;
 
-  async function makeRpcCall(method: string, params: any[]): Promise<any> {
-    const rpcPayload = {
-      jsonrpc: '2.0',
-      method: method,
-      params: params,
-      id: generateRpcId(),
-    };
+					const requestBody = {
+						jsonrpc: '2.0',
+						method: 'eth_getBalance',
+						params: [address, blockParam],
+						id: 1,
+					};
 
-    const options: any = {
-      method: 'POST',
-      url: credentials.baseUrl || 'https://forno.celo.org',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(rpcPayload),
-    };
+					const options: any = {
+						method: 'POST',
+						url: baseUrl,
+						headers,
+						body: requestBody,
+						json: true,
+					};
 
-    const response = await this.helpers.httpRequest(options) as any;
-    
-    if (response.error) {
-      throw new NodeApiError(this.getNode(), response.error);
-    }
-    
-    return response.result;
-  }
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
+				case 'getTransactionCount': {
+					const address = this.getNodeParameter('address', i) as string;
+					const blockNumber = this.getNodeParameter('blockNumber', i) as string;
+					const customBlockNumber = this.getNodeParameter('customBlockNumber', i, '') as string;
+					
+					const blockParam = blockNumber === 'custom' ? customBlockNumber : blockNumber;
 
-      switch (operation) {
-        case 'getBalance': {
-          const address = this.getNodeParameter('address', i) as string;
-          const blockNumber = this.getNodeParameter('blockNumber', i, 'latest') as string;
-          const tokenContracts = this.getNodeParameter('tokenContracts', i, ['celo']) as string[];
+					const requestBody = {
+						jsonrpc: '2.0',
+						method: 'eth_getTransactionCount',
+						params: [address, blockParam],
+						id: 1,
+					};
 
-          const balances: any = {};
+					const options: any = {
+						method: 'POST',
+						url: baseUrl,
+						headers,
+						body: requestBody,
+						json: true,
+					};
 
-          // Get CELO balance
-          if (tokenContracts.includes('celo')) {
-            const celoBalance = await makeRpcCall('eth_getBalance', [address, blockNumber]);
-            balances.CELO = celoBalance;
-          }
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-          // Get cUSD balance
-          if (tokenContracts.includes('cusd')) {
-            const balanceOfSignature = '0x70a08231000000000000000000000000' + address.slice(2).toLowerCase();
-            const cusdBalance = await makeRpcCall('eth_call', [
-              {
-                to: TOKEN_ADDRESSES.cusd,
-                data: balanceOfSignature,
-              },
-              blockNumber,
-            ]);
-            balances.cUSD = cusdBalance;
-          }
+				case 'getCode': {
+					const address = this.getNodeParameter('address', i) as string;
+					const blockNumber = this.getNodeParameter('blockNumber', i) as string;
+					const customBlockNumber = this.getNodeParameter('customBlockNumber', i, '') as string;
+					
+					const blockParam = blockNumber === 'custom' ? customBlockNumber : blockNumber;
 
-          // Get cEUR balance
-          if (tokenContracts.includes('ceur')) {
-            const balanceOfSignature = '0x70a08231000000000000000000000000' + address.slice(2).toLowerCase();
-            const ceurBalance = await makeRpcCall('eth_call', [
-              {
-                to: TOKEN_ADDRESSES.ceur,
-                data: balanceOfSignature,
-              },
-              blockNumber,
-            ]);
-            balances.cEUR = ceurBalance;
-          }
+					const requestBody = {
+						jsonrpc: '2.0',
+						method: 'eth_getCode',
+						params: [address, blockParam],
+						id: 1,
+					};
 
-          result = {
-            address,
-            blockNumber,
-            balances,
-          };
-          break;
-        }
+					const options: any = {
+						method: 'POST',
+						url: baseUrl,
+						headers,
+						body: requestBody,
+						json: true,
+					};
 
-        case 'getAccountSummary': {
-          const address = this.getNodeParameter('address', i) as string;
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-          // Get multiple account details in parallel
-          const [balance, transactionCount, code] = await Promise.all([
-            makeRpcCall('eth_getBalance', [address, 'latest']),
-            makeRpcCall('eth_getTransactionCount', [address, 'latest']),
-            makeRpcCall('eth_getCode', [address, 'latest']),
-          ]);
+				case 'listAccounts': {
+					const requestBody = {
+						jsonrpc: '2.0',
+						method: 'eth_accounts',
+						params: [],
+						id: 1,
+					};
 
-          // Get token balances
-          const balanceOfSignature = '0x70a08231000000000000000000000000' + address.slice(2).toLowerCase();
-          const [cusdBalance, ceurBalance] = await Promise.all([
-            makeRpcCall('eth_call', [
-              { to: TOKEN_ADDRESSES.cusd, data: balanceOfSignature },
-              'latest',
-            ]),
-            makeRpcCall('eth_call', [
-              { to: TOKEN_ADDRESSES.ceur, data: balanceOfSignature },
-              'latest',
-            ]),
-          ]);
+					const options: any = {
+						method: 'POST',
+						url: baseUrl,
+						headers,
+						body: requestBody,
+						json: true,
+					};
 
-          result = {
-            address,
-            celoBalance: balance,
-            cusdBalance,
-            ceurBalance,
-            transactionCount,
-            contractCode: code,
-            isContract: code !== '0x',
-          };
-          break;
-        }
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-        case 'getCode': {
-          const address = this.getNodeParameter('address', i) as string;
-          const blockNumber = this.getNodeParameter('blockNumber', i, 'latest') as string;
+				case 'callContract': {
+					const transaction = this.getNodeParameter('transaction', i) as object;
+					const blockNumber = this.getNodeParameter('blockNumber', i) as string;
+					const customBlockNumber = this.getNodeParameter('customBlockNumber', i, '') as string;
+					
+					const blockParam = blockNumber === 'custom' ? customBlockNumber : blockNumber;
 
-          const code = await makeRpcCall('eth_getCode', [address, blockNumber]);
+					const requestBody = {
+						jsonrpc: '2.0',
+						method: 'eth_call',
+						params: [transaction, blockParam],
+						id: 1,
+					};
 
-          result = {
-            address,
-            blockNumber,
-            code,
-            isContract: code !== '0x',
-          };
-          break;
-        }
+					const options: any = {
+						method: 'POST',
+						url: baseUrl,
+						headers,
+						body: requestBody,
+						json: true,
+					};
 
-        case 'getTransactionCount': {
-          const address = this.getNodeParameter('address', i) as string;
-          const blockNumber = this.getNodeParameter('blockNumber', i, 'latest') as string;
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-          const transactionCount = await makeRpcCall('eth_getTransactionCount', [address, blockNumber]);
+				default:
+					throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
+			}
 
-          result = {
-            address,
-            blockNumber,
-            transactionCount,
-            nonce: parseInt(transactionCount, 16),
-          };
-          break;
-        }
+			returnData.push({
+				json: result,
+				pairedItem: { item: i },
+			});
+		} catch (error: any) {
+			if (this.continueOnFail()) {
+				returnData.push({
+					json: { error: error.message },
+					pairedItem: { item: i },
+				});
+			} else {
+				throw error;
+			}
+		}
+	}
 
-        case 'createAccount': {
-          const keyPair = generateKeyPair();
-          
-          result = {
-            address: keyPair.address,
-            privateKey: keyPair.privateKey,
-            warning: 'This is a demo implementation. Use proper cryptographic libraries in production.',
-          };
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message }, 
-          pairedItem: { item: i } 
-        });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
+	return returnData;
 }
 
-async function executeStableTokensOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
+async function executeTransactionOperations(
+	this: IExecuteFunctions,
+	items: INodeExecutionData[],
 ): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('celoApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'transfer': {
-          const tokenAddress = this.getNodeParameter('tokenAddress', i) as string;
-          const to = this.getNodeParameter('to', i) as string;
-          const value = this.getNodeParameter('value', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-          const gasLimit = this.getNodeParameter('gasLimit', i, 100000) as number;
-          const gasPrice = this.getNodeParameter('gasPrice', i, '') as string;
-
-          const web3 = new Web3();
-          const account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
-          // ERC20 transfer function selector
-          const transferData = web3.eth.abi.encodeFunctionCall({
-            name: 'transfer',
-            type: 'function',
-            inputs: [
-              { type: 'address', name: 'to' },
-              { type: 'uint256', name: 'value' }
-            ]
-          }, [to, value]);
-
-          const nonce = await this.makeJsonRpcCall('eth_getTransactionCount', [account.address, 'latest']);
-          const currentGasPrice = gasPrice || await this.makeJsonRpcCall('eth_gasPrice', []);
-
-          const txData = {
-            from: account.address,
-            to: tokenAddress,
-            data: transferData,
-            gas: `0x${gasLimit.toString(16)}`,
-            gasPrice: currentGasPrice.startsWith('0x') ? currentGasPrice : `0x${parseInt(currentGasPrice).toString(16)}`,
-            nonce: nonce,
-            value: '0x0'
-          };
-
-          const signedTx = await web3.eth.accounts.signTransaction(txData, privateKey);
-          const txHash = await this.makeJsonRpcCall('eth_sendRawTransaction', [signedTx.rawTransaction]);
-
-          result = {
-            transactionHash: txHash,
-            from: account.address,
-            to: to,
-            value: value,
-            tokenAddress: tokenAddress
-          };
-          break;
-        }
-
-        case 'approve': {
-          const tokenAddress = this.getNodeParameter('tokenAddress', i) as string;
-          const spender = this.getNodeParameter('spender', i) as string;
-          const value = this.getNodeParameter('value', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-          const gasLimit = this.getNodeParameter('gasLimit', i, 100000) as number;
-          const gasPrice = this.getNodeParameter('gasPrice', i, '') as string;
-
-          const web3 = new Web3();
-          const account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
-          // ERC20 approve function selector
-          const approveData = web3.eth.abi.encodeFunctionCall({
-            name: 'approve',
-            type: 'function',
-            inputs: [
-              { type: 'address', name: 'spender' },
-              { type: 'uint256', name: 'value' }
-            ]
-          }, [spender, value]);
-
-          const nonce = await this.makeJsonRpcCall('eth_getTransactionCount', [account.address, 'latest']);
-          const currentGasPrice = gasPrice || await this.makeJsonRpcCall('eth_gasPrice', []);
-
-          const txData = {
-            from: account.address,
-            to: tokenAddress,
-            data: approveData,
-            gas: `0x${gasLimit.toString(16)}`,
-            gasPrice: currentGasPrice.startsWith('0x') ? currentGasPrice : `0x${parseInt(currentGasPrice).toString(16)}`,
-            nonce: nonce,
-            value: '0x0'
-          };
-
-          const signedTx = await web3.eth.accounts.signTransaction(txData, privateKey);
-          const txHash = await this.makeJsonRpcCall('eth_sendRawTransaction', [signedTx.rawTransaction]);
-
-          result = {
-            transactionHash: txHash,
-            owner: account.address,
-            spender: spender,
-            value: value,
-            tokenAddress: tokenAddress
-          };
-          break;
-        }
-
-        case 'allowance': {
-          const tokenAddress = this.getNodeParameter('tokenAddress', i) as string;
-          const owner = this.getNodeParameter('owner', i) as string;
-          const spender = this.getNodeParameter('spender', i) as string;
-
-          const web3 = new Web3();
-          const allowanceData = web3.eth.abi.encodeFunctionCall({
-            name: 'allowance',
-            type: 'function',
-            inputs: [
-              { type: 'address', name: 'owner' },
-              { type: 'address', name: 'spender' }
-            ]
-          }, [owner, spender]);
-
-          const allowanceResult = await this.makeJsonRpcCall('eth_call', [{
-            to: tokenAddress,
-            data: allowanceData
-          }, 'latest']);
-
-          result = {
-            owner: owner,
-            spender: spender,
-            allowance: allowanceResult,
-            tokenAddress: tokenAddress
-          };
-          break;
-        }
-
-        case 'balanceOf': {
-          const tokenAddress = this.getNodeParameter('tokenAddress', i) as string;
-          const address = this.getNodeParameter('address', i) as string;
-
-          const web3 = new Web3();
-          const balanceData = web3.eth.abi.encodeFunctionCall({
-            name: 'balanceOf',
-            type: 'function',
-            inputs: [{ type: 'address', name: 'account' }]
-          }, [address]);
-
-          const balance = await this.makeJsonRpcCall('eth_call', [{
-            to: tokenAddress,
-            data: balanceData
-          }, 'latest']);
-
-          result = {
-            address: address,
-            balance: balance,
-            tokenAddress: tokenAddress
-          };
-          break;
-        }
-
-        case 'totalSupply': {
-          const tokenAddress = this.getNodeParameter('tokenAddress', i) as string;
-
-          const web3 = new Web3();
-          const totalSupplyData = web3.eth.abi.encodeFunctionCall({
-            name: 'totalSupply',
-            type: 'function',
-            inputs: []
-          }, []);
-
-          const totalSupply = await this.makeJsonRpcCall('eth_call', [{
-            to: tokenAddress,
-            data: totalSupplyData
-          }, 'latest']);
-
-          result = {
-            totalSupply: totalSupply,
-            tokenAddress: tokenAddress
-          };
-          break;
-        }
-
-        case 'getTokenInfo': {
-          const tokenAddress = this.getNodeParameter('tokenAddress', i) as string;
-
-          const web3 = new Web3();
-          
-          // Get name
-          const nameData = web3.eth.abi.encodeFunctionCall({
-            name: 'name',
-            type: 'function',
-            inputs: []
-          }, []);
-
-          // Get symbol
-          const symbolData = web3.eth.abi.encodeFunctionCall({
-            name: 'symbol',
-            type: 'function',
-            inputs: []
-          }, []);
-
-          // Get decimals
-          const decimalsData = web3.eth.abi.encodeFunctionCall({
-            name: 'decimals',
-            type: 'function',
-            inputs: []
-          }, []);
-
-          // Get total supply
-          const totalSupplyData = web3.eth.abi.encodeFunctionCall({
-            name: 'totalSupply',
-            type: 'function',
-            inputs: []
-          }, []);
-
-          const [name, symbol, decimals, totalSupply] = await Promise.all([
-            this.makeJsonRpcCall('eth_call', [{ to: tokenAddress, data: nameData }, 'latest']),
-            this.makeJsonRpcCall('eth_call', [{ to: tokenAddress, data: symbolData }, 'latest']),
-            this.makeJsonRpcCall('eth_call', [{ to: tokenAddress, data: decimalsData }, 'latest']),
-            this.makeJsonRpcCall('eth_call', [{ to: tokenAddress, data: totalSupplyData }, 'latest'])
-          ]);
-
-          result = {
-            tokenAddress: tokenAddress,
-            name: web3.utils.hexToAscii(name).replace(/\0/g, ''),
-            symbol: web3.utils.hexToAscii(symbol).replace(/\0/g, ''),
-            decimals: parseInt(decimals, 16),
-            totalSupply: totalSupply
-          };
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw new NodeApiError(this.getNode(), error);
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function makeJsonRpcCall(this: IExecuteFunctions, method: string, params: any[]): Promise<any> {
-  const credentials = await this.getCredentials('celoApi') as any;
-  
-  const options: any = {
-    method: 'POST',
-    url: credentials.baseUrl || 'https://forno.celo.org',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      id: Math.floor(Math.random() * 1000000),
-      method: method,
-      params: params,
-    }),
-    json: false,
-  };
-
-  const response = await this.helpers.httpRequest(options) as any;
-  const parsedResponse = JSON.parse(response);
-  
-  if (parsedResponse.error) {
-    throw new NodeApiError(this.getNode(), parsedResponse.error);
-  }
-  
-  return parsedResponse.result;
-}
-
-async function executeIdentityOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('celoApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'requestAttestations': {
-          const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
-          const attestationsRequested = this.getNodeParameter('attestationsRequested', i) as number;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const requestBody = {
-            jsonrpc: '2.0',
-            method: 'eth_call',
-            params: [
-              {
-                to: '0x8c19c95D6f1B1c13d54a66A5b4e5BfbD45f94D59', // Attestations contract
-                data: '0x' + phoneNumber.replace('+', '').padStart(64, '0') + attestationsRequested.toString(16).padStart(64, '0'),
-              },
-              'latest',
-            ],
-            id: 1,
-          };
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'selectIssuers': {
-          const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
-          const attestationsRequested = this.getNodeParameter('attestationsRequested', i) as number;
-
-          const requestBody = {
-            jsonrpc: '2.0',
-            method: 'eth_call',
-            params: [
-              {
-                to: '0x8c19c95D6f1B1c13d54a66A5b4e5BfbD45f94D59',
-                data: '0x' + phoneNumber.replace('+', '').padStart(64, '0') + attestationsRequested.toString(16).padStart(64, '0'),
-              },
-              'latest',
-            ],
-            id: 1,
-          };
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'completeAttestations': {
-          const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
-          const attestationCode = this.getNodeParameter('attestationCode', i) as string;
-
-          const requestBody = {
-            jsonrpc: '2.0',
-            method: 'eth_call',
-            params: [
-              {
-                to: '0x8c19c95D6f1B1c13d54a66A5b4e5BfbD45f94D59',
-                data: '0x' + phoneNumber.replace('+', '').padStart(64, '0') + attestationCode.padStart(64, '0'),
-              },
-              'latest',
-            ],
-            id: 1,
-          };
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getAttestations': {
-          const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
-          const address = this.getNodeParameter('address', i) as string;
-
-          const requestBody = {
-            jsonrpc: '2.0',
-            method: 'eth_call',
-            params: [
-              {
-                to: '0x8c19c95D6f1B1c13d54a66A5b4e5BfbD45f94D59',
-                data: '0x' + phoneNumber.replace('+', '').padStart(64, '0') + address.replace('0x', '').padStart(64, '0'),
-              },
-              'latest',
-            ],
-            id: 1,
-          };
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getAccountMetadata': {
-          const address = this.getNodeParameter('address', i) as string;
-
-          const requestBody = {
-            jsonrpc: '2.0',
-            method: 'eth_call',
-            params: [
-              {
-                to: '0x8c19c95D6f1B1c13d54a66A5b4e5BfbD45f94D59',
-                data: '0x' + address.replace('0x', '').padStart(64, '0'),
-              },
-              'latest',
-            ],
-            id: 1,
-          };
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'setAccountMetadata': {
-          const metadataURL = this.getNodeParameter('metadataURL', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const requestBody = {
-            jsonrpc: '2.0',
-            method: 'eth_sendTransaction',
-            params: [
-              {
-                to: '0x8c19c95D6f1B1c13d54a66A5b4e5BfbD45f94D59',
-                data: '0x' + Buffer.from(metadataURL, 'utf8').toString('hex').padStart(64, '0'),
-                gas: '0x5208',
-                gasPrice: '0x9184e72a000',
-              },
-            ],
-            id: 1,
-          };
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestBody),
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw new NodeApiError(this.getNode(), error);
-      }
-    }
-  }
-
-  return returnData;
-}
-
-function generateRandomId(): string {
-  return Math.floor(Math.random() * 1000000).toString();
-}
-
-async function executeValidatorStakingOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('celoApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'vote': {
-          const group = this.getNodeParameter('group', i) as string;
-          const value = this.getNodeParameter('value', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_sendTransaction',
-              params: [{
-                to: '0x8D6677192144292870907E3Fa8A5527fE55A7ff6', // Election contract
-                data: `0x580d747c${group.slice(2).padStart(64, '0')}${BigInt(value).toString(16).padStart(64, '0')}`,
-                gas: '0x5208',
-                gasPrice: '0x174876e800',
-              }],
-              id: generateRandomId(),
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'activate': {
-          const group = this.getNodeParameter('group', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_sendTransaction',
-              params: [{
-                to: '0x8D6677192144292870907E3Fa8A5527fE55A7ff6', // Election contract
-                data: `0x441a3e70${group.slice(2).padStart(64, '0')}`,
-                gas: '0x5208',
-                gasPrice: '0x174876e800',
-              }],
-              id: generateRandomId(),
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'revoke': {
-          const group = this.getNodeParameter('group', i) as string;
-          const value = this.getNodeParameter('value', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_sendTransaction',
-              params: [{
-                to: '0x8D6677192144292870907E3Fa8A5527fE55A7ff6', // Election contract
-                data: `0x6e198475${group.slice(2).padStart(64, '0')}${BigInt(value).toString(16).padStart(64, '0')}`,
-                gas: '0x5208',
-                gasPrice: '0x174876e800',
-              }],
-              id: generateRandomId(),
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getVotesForGroup': {
-          const group = this.getNodeParameter('group', i) as string;
-          const voter = this.getNodeParameter('voter', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [{
-                to: '0x8D6677192144292870907E3Fa8A5527fE55A7ff6', // Election contract
-                data: `0x2f2d783b${voter.slice(2).padStart(64, '0')}${group.slice(2).padStart(64, '0')}`,
-              }, 'latest'],
-              id: generateRandomId(),
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getElectedValidators': {
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [{
-                to: '0x8D6677192144292870907E3Fa8A5527fE55A7ff6', // Election contract
-                data: '0x677342ce', // getElectedValidators()
-              }, 'latest'],
-              id: generateRandomId(),
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getValidatorGroups': {
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [{
-                to: '0x000000000000000000000000000000000000ce10', // Validators contract
-                data: '0x0c9fd581', // getRegisteredValidatorGroups()
-              }, 'latest'],
-              id: generateRandomId(),
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'lock': {
-          const value = this.getNodeParameter('value', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_sendTransaction',
-              params: [{
-                to: '0x6cC083Aed9e3ebe302A6336dBC7c921C9f03349E', // LockedGold contract
-                data: '0xf83d08ba',
-                value: `0x${BigInt(value).toString(16)}`,
-                gas: '0x5208',
-                gasPrice: '0x174876e800',
-              }],
-              id: generateRandomId(),
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'unlock': {
-          const value = this.getNodeParameter('value', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_sendTransaction',
-              params: [{
-                to: '0x6cC083Aed9e3ebe302A6336dBC7c921C9f03349E',
-                data: `0x2e1a7d4d${BigInt(value).toString(16).padStart(64, '0')}`,
-                gas: '0x5208',
-                gasPrice: '0x174876e800',
-              }],
-              id: generateRandomId(),
-            },
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({
-        json: result,
-        pairedItem: { item: i },
-      });
-
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
-        });
-      } else {
-        throw new NodeApiError(this.getNode(), error);
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeGovernanceOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('celoApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'propose': {
-          const values = this.getNodeParameter('values', i) as any;
-          const destinations = this.getNodeParameter('destinations', i) as any;
-          const data = this.getNodeParameter('data', i) as any;
-          const descriptionURL = this.getNodeParameter('descriptionURL', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_sendRawTransaction',
-              params: [await signGovernanceTransaction(
-                'propose',
-                { values, destinations, data, descriptionURL },
-                privateKey
-              )],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'vote': {
-          const proposalId = this.getNodeParameter('proposalId', i) as string;
-          const vote = this.getNodeParameter('vote', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_sendRawTransaction',
-              params: [await signGovernanceTransaction(
-                'vote',
-                { proposalId, vote },
-                privateKey
-              )],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getProposal': {
-          const proposalId = this.getNodeParameter('proposalId', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [
-                {
-                  to: '0x8D6677192144292870907E3Fa8A5527fE55A7ff6', // Governance contract address
-                  data: `0x013cf08b${proposalId.padStart(64, '0')}`, // getProposal function selector
-                },
-                'latest'
-              ],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getProposals': {
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [
-                {
-                  to: '0x8D6677192144292870907E3Fa8A5527fE55A7ff6', // Governance contract address
-                  data: '0x32ed5b12', // getProposals function selector
-                },
-                'latest'
-              ],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'execute': {
-          const proposalId = this.getNodeParameter('proposalId', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_sendRawTransaction',
-              params: [await signGovernanceTransaction(
-                'execute',
-                { proposalId },
-                privateKey
-              )],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getVoteRecord': {
-          const address = this.getNodeParameter('address', i) as string;
-          const proposalId = this.getNodeParameter('proposalId', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [
-                {
-                  to: '0x8D6677192144292870907E3Fa8A5527fE55A7ff6', // Governance contract address
-                  data: `0x8782084e${proposalId.padStart(64, '0')}${address.slice(2).padStart(64, '0')}`, // getVoteRecord function selector
-                },
-                'latest'
-              ],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getQueue': {
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [
-                {
-                  to: '0x8D6677192144292870907E3Fa8A5527fE55A7ff6', // Governance contract address
-                  data: '0xf5ce59b7', // getQueue function selector
-                },
-                'latest'
-              ],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'upvote': {
-          const proposalId = this.getNodeParameter('proposalId', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl || 'https://forno.celo.org',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
-            body: {
-              jsonrpc: '2.0',
-              method: 'eth_sendRawTransaction',
-              params: [await signGovernanceTransaction(
-                'upvote',
-                { proposalId },
-                privateKey
-              )],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      if (result.error) {
-        throw new NodeApiError(this.getNode(), result.error);
-      }
-
-      returnData.push({ json: result.result || result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function signGovernanceTransaction(method: string, params: any, privateKey: string): Promise<string> {
-  // This is a simplified implementation - in practice, you would use a proper
-  // transaction signing library like ethers.js or web3.js
-  const encodedData = encodeGovernanceCall(method, params);
-  
-  // Mock signed transaction - in practice this would be properly signed
-  return `0x${encodedData}${privateKey.slice(-8)}`;
-}
-
-function encodeGovernanceCall(method: string, params: any): string {
-  const methodSignatures: any = {
-    propose: '0xda35c664',
-    vote: '0x15373e3d',
-    execute: '0xfe0d94c1',
-    upvote: '0x6cbf8b5c',
-  };
-
-  const signature = methodSignatures[method] || '0x00000000';
-  
-  // Simple parameter encoding - in practice would use proper ABI encoding
-  let encodedParams = '';
-  Object.values(params).forEach((param: any) => {
-    if (typeof param === 'string') {
-      encodedParams += param.replace('0x', '').padStart(64, '0');
-    } else if (Array.isArray(param)) {
-      encodedParams += param.length.toString(16).padStart(64, '0');
-      param.forEach((item: any) => {
-        encodedParams += item.toString().replace('0x', '').padStart(64, '0');
-      });
-    }
-  });
-
-  return signature + encodedParams;
-}
-
-async function executeExchangeOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('celoApi') as any;
-
-  const tokenAddresses: any = {
-    CELO: '0x471EcE3750Da237f93B8E339c536989b8978a438',
-    cUSD: '0x765DE816845861e75A25fCA122bb6898B8B1282a',
-    cEUR: '0xD8763CBa276a3738E6DE85b4b3bF5FDed6D6cA73',
-    cREAL: '0xe8537a3d056DA446677B9E9d6c5dB704EaAb4787',
-  };
-
-  function getExchangeAddress(sellToken: string, buyToken: string): string {
-    if (sellToken === 'CELO' && buyToken === 'cUSD') return '0x67316300f17f063085Ca8bCa4bd7f7a5a3078308';
-    if (sellToken === 'cUSD' && buyToken === 'CELO') return '0x67316300f17f063085Ca8bCa4bd7f7a5a3078308';
-    if (sellToken === 'CELO' && buyToken === 'cEUR') return '0xE383394B913d7302c49F794C7d3243c429d53D1d';
-    if (sellToken === 'cEUR' && buyToken === 'CELO') return '0xE383394B913d7302c49F794C7d3243c429d53D1d';
-    if (sellToken === 'CELO' && buyToken === 'cREAL') return '0x8f2Cf9855C919AFAC8Bd2E7acEc0205ed568a4EA';
-    if (sellToken === 'cREAL' && buyToken === 'CELO') return '0x8f2Cf9855C919AFAC8Bd2E7acEc0205ed568a4EA';
-    throw new NodeOperationError(this.getNode(), `Exchange pair ${sellToken}/${buyToken} not supported`);
-  }
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'exchange': {
-          const sellAmount = this.getNodeParameter('sellAmount', i) as string;
-          const minBuyAmount = this.getNodeParameter('minBuyAmount', i) as string;
-          const sellToken = this.getNodeParameter('sellToken', i) as string;
-          const buyToken = this.getNodeParameter('buyToken', i) as string;
-          const privateKey = this.getNodeParameter('privateKey', i) as string;
-
-          const exchangeAddress = getExchangeAddress.call(this, sellToken, buyToken);
-          
-          // Get nonce
-          const nonceOptions: any = {
-            method: 'POST',
-            url: credentials.baseUrl,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: {
-              jsonrpc: '2.0',
-              method: 'eth_getTransactionCount',
-              params: [privateKey.slice(0, 42), 'latest'],
-              id: 1,
-            },
-          };
-
-          const nonceResponse = await this.helpers.httpRequest(nonceOptions) as any;
-          const nonce = nonceResponse.result;
-
-          // Exchange transaction
-          const exchangeData = sellToken === 'CELO' 
-            ? `0x94b576de${sellAmount.padStart(64, '0')}${minBuyAmount.padStart(64, '0')}`
-            : `0xa9059cbb${exchangeAddress.slice(2).padStart(64, '0')}${sellAmount.padStart(64, '0')}`;
-
-          const txOptions: any = {
-            method: 'POST',
-            url: credentials.baseUrl,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: {
-              jsonrpc: '2.0',
-              method: 'eth_sendRawTransaction',
-              params: [{
-                from: privateKey.slice(0, 42),
-                to: sellToken === 'CELO' ? exchangeAddress : tokenAddresses[sellToken],
-                value: sellToken === 'CELO' ? sellAmount : '0x0',
-                data: exchangeData,
-                gas: '0x5208',
-                gasPrice: '0x3b9aca00',
-                nonce: nonce,
-              }],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(txOptions) as any;
-          break;
-        }
-
-        case 'getExchangeRate': {
-          const sellToken = this.getNodeParameter('sellToken', i) as string;
-          const buyToken = this.getNodeParameter('buyToken', i) as string;
-          const sellAmount = this.getNodeParameter('sellAmount', i) as string;
-
-          const exchangeAddress = getExchangeAddress.call(this, sellToken, buyToken);
-          const methodId = sellToken === 'CELO' ? '0x935b5e8b' : '0x2e9cd96d';
-          const data = methodId + sellAmount.padStart(64, '0');
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [
-                {
-                  to: exchangeAddress,
-                  data: data,
-                },
-                'latest',
-              ],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBuyTokenAmount': {
-          const sellToken = this.getNodeParameter('sellToken', i) as string;
-          const buyToken = this.getNodeParameter('buyToken', i) as string;
-          const sellAmount = this.getNodeParameter('sellAmount', i) as string;
-
-          const exchangeAddress = getExchangeAddress.call(this, sellToken, buyToken);
-          const methodId = sellToken === 'CELO' ? '0x935b5e8b' : '0x2e9cd96d';
-          const data = methodId + sellAmount.padStart(64, '0');
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [
-                {
-                  to: exchangeAddress,
-                  data: data,
-                },
-                'latest',
-              ],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getSellTokenAmount': {
-          const sellToken = this.getNodeParameter('sellToken', i) as string;
-          const buyToken = this.getNodeParameter('buyToken', i) as string;
-          const buyAmount = this.getNodeParameter('buyAmount', i) as string;
-
-          const exchangeAddress = getExchangeAddress.call(this, sellToken, buyToken);
-          const methodId = sellToken === 'CELO' ? '0x2d40016b' : '0x7e1c42bd';
-          const data = methodId + buyAmount.padStart(64, '0');
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [
-                {
-                  to: exchangeAddress,
-                  data: data,
-                },
-                'latest',
-              ],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getReserves': {
-          const reserveAddress = '0x9380fA34Fd9e4Fd14c06305fd7B6199089eD4eb9';
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [
-                {
-                  to: reserveAddress,
-                  data: '0x0902f1ac', // getReserves()
-                },
-                'latest',
-              ],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getReserveRatio': {
-          const token = this.getNodeParameter('token', i) as string;
-          const exchangeAddress = getExchangeAddress.call(this, 'CELO', token);
-
-          const options: any = {
-            method: 'POST',
-            url: credentials.baseUrl,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: {
-              jsonrpc: '2.0',
-              method: 'eth_call',
-              params: [
-                {
-                  to: exchangeAddress,
-                  data: '0x1e83409a', // getReserveRatio()
-                },
-                'latest',
-              ],
-              id: 1,
-            },
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(
-            this.getNode(),
-            `Unknown operation: ${operation}`,
-          );
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
+	const returnData: INodeExecutionData[] = [];
+	const operation = this.getNodeParameter('operation', 0) as string;
+	const credentials = await this.getCredentials('celoApi') as any;
+
+	for (let i = 0; i < items.length; i++) {
+		try {
+			let result: any;
+			
+			switch (operation) {
+				case 'sendTransaction': {
+					const transaction = this.getNodeParameter('transaction', i) as any;
+					const requestBody = {
+						jsonrpc: '2.0',
+						method: 'eth_sendTransaction',
+						params: [transaction],
+						id: 1,
+					};
+					
+					const options: any = {
+						method: 'POST',
+						url: credentials.baseUrl || 'https://forno.celo.org',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${credentials.apiKey}`,
+						},
+						body: requestBody,
+						json: true,
+					};
+					
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
+
+				case 'sendRawTransaction': {
+					const data = this.getNodeParameter('data', i) as string;
+					const requestBody = {
+						jsonrpc: '2.0',
+						method: 'eth_sendRawTransaction',
+						params: [data],
+						id:
