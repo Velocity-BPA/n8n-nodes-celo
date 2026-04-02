@@ -33,20 +33,20 @@ describe('Celo Node', () => {
       expect(node.description.outputs).toContain('main');
     });
 
-    it('should define 6 resources', () => {
+    it('should define 7 resources', () => {
       const resourceProp = node.description.properties.find(
         (p: any) => p.name === 'resource'
       );
       expect(resourceProp).toBeDefined();
       expect(resourceProp!.type).toBe('options');
-      expect(resourceProp!.options).toHaveLength(6);
+      expect(resourceProp!.options).toHaveLength(7);
     });
 
     it('should have operation dropdowns for each resource', () => {
       const operations = node.description.properties.filter(
         (p: any) => p.name === 'operation'
       );
-      expect(operations.length).toBe(6);
+      expect(operations.length).toBe(7);
     });
 
     it('should require credentials', () => {
@@ -67,637 +67,519 @@ describe('Celo Node', () => {
   });
 
   // Resource-specific tests
-describe('Accounts Resource', () => {
+describe('Account Resource', () => {
+	let mockExecuteFunctions: any;
+
+	beforeEach(() => {
+		mockExecuteFunctions = {
+			getNodeParameter: jest.fn(),
+			getCredentials: jest.fn().mockResolvedValue({
+				apiKey: 'test-key',
+				baseUrl: 'https://forno.celo.org',
+			}),
+			getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+			getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+			continueOnFail: jest.fn().mockReturnValue(false),
+			helpers: {
+				httpRequest: jest.fn(),
+				requestWithAuthentication: jest.fn(),
+			},
+		};
+	});
+
+	describe('getBalance operation', () => {
+		it('should get account balance successfully', async () => {
+			mockExecuteFunctions.getNodeParameter
+				.mockReturnValueOnce('getBalance')
+				.mockReturnValueOnce('0x742d35Cc6634C0532925a3b8D598C3e6fE4dEd9C')
+				.mockReturnValueOnce('latest');
+
+			const mockResponse = {
+				jsonrpc: '2.0',
+				id: 1,
+				result: '0x1b1ae4d6e2ef500000',
+			};
+
+			mockExecuteFunctions.helpers.httpRequest.mockResolvedValueOnce(mockResponse);
+
+			const result = await executeAccountOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+			expect(result[0].json).toEqual(mockResponse);
+			expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+				method: 'POST',
+				url: 'https://forno.celo.org',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': 'Bearer test-key',
+				},
+				body: {
+					jsonrpc: '2.0',
+					method: 'eth_getBalance',
+					params: ['0x742d35Cc6634C0532925a3b8D598C3e6fE4dEd9C', 'latest'],
+					id: 1,
+				},
+				json: true,
+			});
+		});
+
+		it('should handle getBalance errors', async () => {
+			mockExecuteFunctions.getNodeParameter
+				.mockReturnValueOnce('getBalance')
+				.mockReturnValueOnce('invalid-address')
+				.mockReturnValueOnce('latest');
+
+			mockExecuteFunctions.helpers.httpRequest.mockRejectedValueOnce(new Error('Invalid address'));
+			mockExecuteFunctions.continueOnFail.mockReturnValueOnce(true);
+
+			const result = await executeAccountOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+			expect(result[0].json.error).toBe('Invalid address');
+		});
+	});
+
+	describe('getTransactionCount operation', () => {
+		it('should get transaction count successfully', async () => {
+			mockExecuteFunctions.getNodeParameter
+				.mockReturnValueOnce('getTransactionCount')
+				.mockReturnValueOnce('0x742d35Cc6634C0532925a3b8D598C3e6fE4dEd9C')
+				.mockReturnValueOnce('latest');
+
+			const mockResponse = {
+				jsonrpc: '2.0',
+				id: 1,
+				result: '0x1a',
+			};
+
+			mockExecuteFunctions.helpers.httpRequest.mockResolvedValueOnce(mockResponse);
+
+			const result = await executeAccountOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+			expect(result[0].json).toEqual(mockResponse);
+		});
+	});
+
+	describe('getCode operation', () => {
+		it('should get contract code successfully', async () => {
+			mockExecuteFunctions.getNodeParameter
+				.mockReturnValueOnce('getCode')
+				.mockReturnValueOnce('0x742d35Cc6634C0532925a3b8D598C3e6fE4dEd9C')
+				.mockReturnValueOnce('latest');
+
+			const mockResponse = {
+				jsonrpc: '2.0',
+				id: 1,
+				result: '0x608060405234801561001057600080fd5b50',
+			};
+
+			mockExecuteFunctions.helpers.httpRequest.mockResolvedValueOnce(mockResponse);
+
+			const result = await executeAccountOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+			expect(result[0].json).toEqual(mockResponse);
+		});
+	});
+
+	describe('listAccounts operation', () => {
+		it('should list accounts successfully', async () => {
+			mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('listAccounts');
+
+			const mockResponse = {
+				jsonrpc: '2.0',
+				id: 1,
+				result: ['0x742d35Cc6634C0532925a3b8D598C3e6fE4dEd9C'],
+			};
+
+			mockExecuteFunctions.helpers.httpRequest.mockResolvedValueOnce(mockResponse);
+
+			const result = await executeAccountOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+			expect(result[0].json).toEqual(mockResponse);
+		});
+	});
+
+	describe('callContract operation', () => {
+		it('should call contract successfully', async () => {
+			const transaction = {
+				to: '0x742d35Cc6634C0532925a3b8D598C3e6fE4dEd9C',
+				data: '0x70a08231',
+			};
+
+			mockExecuteFunctions.getNodeParameter
+				.mockReturnValueOnce('callContract')
+				.mockReturnValueOnce(transaction)
+				.mockReturnValueOnce('latest');
+
+			const mockResponse = {
+				jsonrpc: '2.0',
+				id: 1,
+				result: '0x0000000000000000000000000000000000000000000000000000000000000000',
+			};
+
+			mockExecuteFunctions.helpers.httpRequest.mockResolvedValueOnce(mockResponse);
+
+			const result = await executeAccountOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+			expect(result[0].json).toEqual(mockResponse);
+		});
+	});
+});
+
+describe('Transaction Resource', () => {
+	let mockExecuteFunctions: any;
+
+	beforeEach(() => {
+		mockExecuteFunctions = {
+			getNodeParameter: jest.fn(),
+			getCredentials: jest.fn().mockResolvedValue({ 
+				apiKey: 'test-key', 
+				baseUrl: 'https://forno.celo.org' 
+			}),
+			getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+			getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+			continueOnFail: jest.fn().mockReturnValue(false),
+			helpers: { 
+				httpRequest: jest.fn(),
+				requestWithAuthentication: jest.fn() 
+			},
+		};
+	});
+
+	it('should send transaction successfully', async () => {
+		const mockTransaction = { to: '0x123', value: '1000000000000000000' };
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('sendTransaction')
+			.mockReturnValueOnce(mockTransaction);
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({ 
+			result: '0xabc123' 
+		});
+
+		const result = await executeTransactionOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }]
+		);
+
+		expect(result).toHaveLength(1);
+		expect(result[0].json.result).toBe('0xabc123');
+	});
+
+	it('should handle send transaction error', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('sendTransaction')
+			.mockReturnValueOnce({});
+		mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(
+			new Error('Transaction failed')
+		);
+		mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+
+		const result = await executeTransactionOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }]
+		);
+
+		expect(result).toHaveLength(1);
+		expect(result[0].json.error).toBe('Transaction failed');
+	});
+
+	it('should get transaction by hash successfully', async () => {
+		const mockHash = '0xabc123';
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getTransactionByHash')
+			.mockReturnValueOnce(mockHash);
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({ 
+			result: { hash: mockHash, blockNumber: '0x1' } 
+		});
+
+		const result = await executeTransactionOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }]
+		);
+
+		expect(result).toHaveLength(1);
+		expect(result[0].json.result.hash).toBe(mockHash);
+	});
+
+	it('should estimate gas successfully', async () => {
+		const mockTransaction = { to: '0x123', data: '0x456' };
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('estimateGas')
+			.mockReturnValueOnce(mockTransaction);
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({ 
+			result: '0x5208' 
+		});
+
+		const result = await executeTransactionOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }]
+		);
+
+		expect(result).toHaveLength(1);
+		expect(result[0].json.result).toBe('0x5208');
+	});
+
+	it('should get gas price successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getGasPrice');
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({ 
+			result: '0x3b9aca00' 
+		});
+
+		const result = await executeTransactionOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }]
+		);
+
+		expect(result).toHaveLength(1);
+		expect(result[0].json.result).toBe('0x3b9aca00');
+	});
+});
+
+describe('Block Resource', () => {
   let mockExecuteFunctions: any;
 
   beforeEach(() => {
     mockExecuteFunctions = {
       getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        baseUrl: 'https://forno.celo.org',
+      getCredentials: jest.fn().mockResolvedValue({ 
+        apiKey: 'test-key', 
+        baseUrl: 'https://forno.celo.org' 
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
       continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
+      helpers: { 
         httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
+        requestWithAuthentication: jest.fn() 
       },
     };
   });
 
-  describe('getBalance operation', () => {
-    it('should get CELO balance successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'getBalance';
-          case 'address': return '0x742d35Cc6634C0532925a3b8D65d0A2E81ca1234';
-          case 'blockNumber': return 'latest';
-          case 'tokenContracts': return ['celo'];
-          default: return undefined;
-        }
-      });
+  it('should get block by number successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getBlockByNumber')
+      .mockReturnValueOnce('latest')
+      .mockReturnValueOnce(false);
+    
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      jsonrpc: '2.0',
+      id: 1,
+      result: { number: '0x1234', hash: '0xabcd' }
+    });
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+    const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    expect(result).toHaveLength(1);
+    expect(result[0].json.result.number).toBe('0x1234');
+  });
+
+  it('should handle getBlockByNumber error', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getBlockByNumber')
+      .mockReturnValueOnce('latest')
+      .mockReturnValueOnce(false);
+    
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Network error'));
+    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+
+    const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    expect(result).toHaveLength(1);
+    expect(result[0].json.error).toBe('Network error');
+  });
+
+  it('should get block by hash successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getBlockByHash')
+      .mockReturnValueOnce('0xabcd1234')
+      .mockReturnValueOnce(true);
+    
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      jsonrpc: '2.0',
+      id: 1,
+      result: { hash: '0xabcd1234', transactions: [] }
+    });
+
+    const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    expect(result).toHaveLength(1);
+    expect(result[0].json.result.hash).toBe('0xabcd1234');
+  });
+
+  it('should get latest block number successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getLatestBlock');
+    
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      jsonrpc: '2.0',
+      id: 1,
+      result: '0x5678'
+    });
+
+    const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    expect(result).toHaveLength(1);
+    expect(result[0].json.result).toBe('0x5678');
+  });
+
+  it('should get block transaction count successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getBlockTransactionCount')
+      .mockReturnValueOnce('0xabcd1234');
+    
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      jsonrpc: '2.0',
+      id: 1,
+      result: '0x5'
+    });
+
+    const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    expect(result).toHaveLength(1);
+    expect(result[0].json.result).toBe('0x5');
+  });
+
+  it('should get uncle block information successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getUncle')
+      .mockReturnValueOnce('0xabcd1234')
+      .mockReturnValueOnce('0x0');
+    
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      jsonrpc: '2.0',
+      id: 1,
+      result: { hash: '0xuncle123', number: '0x100' }
+    });
+
+    const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    expect(result).toHaveLength(1);
+    expect(result[0].json.result.hash).toBe('0xuncle123');
+  });
+});
+
+describe('Validator Resource', () => {
+  let mockExecuteFunctions: any;
+
+  beforeEach(() => {
+    mockExecuteFunctions = {
+      getNodeParameter: jest.fn(),
+      getCredentials: jest.fn().mockResolvedValue({ 
+        apiKey: 'test-key', 
+        baseUrl: 'https://forno.celo.org' 
+      }),
+      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+      continueOnFail: jest.fn().mockReturnValue(false),
+      helpers: { 
+        httpRequest: jest.fn(),
+        requestWithAuthentication: jest.fn() 
+      },
+    };
+  });
+
+  describe('getValidators operation', () => {
+    it('should get list of active validators successfully', async () => {
+      const mockResponse = {
         jsonrpc: '2.0',
         id: 1,
-        result: '0x1bc16d674ec80000'
-      });
+        result: '0x0000000000000000000000000000000000000000000000000000000000000020'
+      };
+
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('getValidators')
+        .mockReturnValueOnce('0x123456')
+        .mockReturnValueOnce('latest')
+        .mockReturnValueOnce('0xcontractaddress');
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
       const items = [{ json: {} }];
-      const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
+      const result = await executeValidatorOperations.call(mockExecuteFunctions, items);
 
       expect(result).toHaveLength(1);
-      expect(result[0].json.address).toBe('0x742d35Cc6634C0532925a3b8D65d0A2E81ca1234');
-      expect(result[0].json.balances.CELO).toBe('0x1bc16d674ec80000');
+      expect(result[0].json).toEqual(mockResponse);
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'POST',
+        url: 'https://forno.celo.org',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer test-key'
+        },
+        json: true,
+        body: {
+          jsonrpc: '2.0',
+          method: 'eth_call',
+          params: [
+            {
+              to: '0xcontractaddress',
+              data: '0x123456',
+            },
+            'latest',
+          ],
+          id: 1,
+        },
+      });
     });
 
-    it('should handle API errors', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'getBalance';
-          case 'address': return '0x742d35Cc6634C0532925a3b8D65d0A2E81ca1234';
-          case 'blockNumber': return 'latest';
-          case 'tokenContracts': return ['celo'];
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
-        jsonrpc: '2.0',
-        id: 1,
-        error: { code: -32000, message: 'Invalid address' }
-      });
-
-      const items = [{ json: {} }];
-      
-      await expect(executeAccountsOperations.call(mockExecuteFunctions, items)).rejects.toThrow();
-    });
-  });
-
-  describe('getAccountSummary operation', () => {
-    it('should get account summary successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'getAccountSummary';
-          case 'address': return '0x742d35Cc6634C0532925a3b8D65d0A2E81ca1234';
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest
-        .mockResolvedValueOnce({ jsonrpc: '2.0', id: 1, result: '0x1bc16d674ec80000' })
-        .mockResolvedValueOnce({ jsonrpc: '2.0', id: 2, result: '0x5' })
-        .mockResolvedValueOnce({ jsonrpc: '2.0', id: 3, result: '0x' })
-        .mockResolvedValueOnce({ jsonrpc: '2.0', id: 4, result: '0x0' })
-        .mockResolvedValueOnce({ jsonrpc: '2.0', id: 5, result: '0x0' });
-
-      const items = [{ json: {} }];
-      const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json.address).toBe('0x742d35Cc6634C0532925a3b8D65d0A2E81ca1234');
-      expect(result[0].json.celoBalance).toBe('0x1bc16d674ec80000');
-      expect(result[0].json.transactionCount).toBe('0x5');
-      expect(result[0].json.isContract).toBe(false);
-    });
-  });
-
-  describe('createAccount operation', () => {
-    it('should create new account successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'createAccount';
-          default: return undefined;
-        }
-      });
-
-      const items = [{ json: {} }];
-      const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json.address).toMatch(/^0x[a-fA-F0-9]{40}$/);
-      expect(result[0].json.privateKey).toMatch(/^0x[a-fA-F0-9]{64}$/);
-      expect(result[0].json.warning).toContain('demo implementation');
-    });
-  });
-
-  describe('error handling', () => {
-    it('should handle errors when continueOnFail is true', async () => {
-      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'getBalance';
-          case 'address': return 'invalid-address';
-          default: return undefined;
-        }
-      });
+    it('should handle errors when getting validators fails', async () => {
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('getValidators')
+        .mockReturnValueOnce('0x123456')
+        .mockReturnValueOnce('latest')
+        .mockReturnValueOnce('0xcontractaddress');
 
       mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Network error'));
+      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
       const items = [{ json: {} }];
-      const result = await executeAccountsOperations.call(mockExecuteFunctions, items);
+      const result = await executeValidatorOperations.call(mockExecuteFunctions, items);
 
       expect(result).toHaveLength(1);
       expect(result[0].json.error).toBe('Network error');
     });
   });
-});
 
-describe('StableTokens Resource', () => {
-  let mockExecuteFunctions: any;
-
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        baseUrl: 'https://forno.celo.org',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-      },
-    };
-  });
-
-  describe('balanceOf operation', () => {
-    it('should get token balance successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'balanceOf';
-          case 'tokenAddress': return '0x765DE816845861e75A25fCA122bb6898B8B1282a';
-          case 'address': return '0x1234567890123456789012345678901234567890';
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        result: '0x1BC16D674EC80000'
-      }));
-
-      const result = await executeStableTokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toHaveProperty('balance');
-      expect(result[0].json).toHaveProperty('address');
-      expect(result[0].json).toHaveProperty('tokenAddress');
-    });
-
-    it('should handle RPC error', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'balanceOf';
-          case 'tokenAddress': return '0x765DE816845861e75A25fCA122bb6898B8B1282a';
-          case 'address': return '0x1234567890123456789012345678901234567890';
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        error: { code: -32000, message: 'Invalid address' }
-      }));
-
-      await expect(
-        executeStableTokensOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow();
-    });
-  });
-
-  describe('totalSupply operation', () => {
-    it('should get total supply successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'totalSupply';
-          case 'tokenAddress': return '0x765DE816845861e75A25fCA122bb6898B8B1282a';
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        result: '0x33B2E3C9FD0803CE8000000'
-      }));
-
-      const result = await executeStableTokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toHaveProperty('totalSupply');
-      expect(result[0].json).toHaveProperty('tokenAddress');
-    });
-  });
-
-  describe('allowance operation', () => {
-    it('should get allowance successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'allowance';
-          case 'tokenAddress': return '0x765DE816845861e75A25fCA122bb6898B8B1282a';
-          case 'owner': return '0x1234567890123456789012345678901234567890';
-          case 'spender': return '0x0987654321098765432109876543210987654321';
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        result: '0x0'
-      }));
-
-      const result = await executeStableTokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toHaveProperty('allowance');
-      expect(result[0].json).toHaveProperty('owner');
-      expect(result[0].json).toHaveProperty('spender');
-    });
-  });
-
-  describe('getTokenInfo operation', () => {
-    it('should get token info successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'getTokenInfo';
-          case 'tokenAddress': return '0x765DE816845861e75A25fCA122bb6898B8B1282a';
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest
-        .mockResolvedValueOnce(JSON.stringify({ jsonrpc: '2.0', id: 1, result: '0x43656c6f20446f6c6c617200000000000000000000000000000000000000000000' })) // name
-        .mockResolvedValueOnce(JSON.stringify({ jsonrpc: '2.0', id: 2, result: '0x6355534400000000000000000000000000000000000000000000000000000000' })) // symbol
-        .mockResolvedValueOnce(JSON.stringify({ jsonrpc: '2.0', id: 3, result: '0x12' })) // decimals
-        .mockResolvedValueOnce(JSON.stringify({ jsonrpc: '2.0', id: 4, result: '0x33B2E3C9FD0803CE8000000' })); // totalSupply
-
-      const result = await executeStableTokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toHaveProperty('name');
-      expect(result[0].json).toHaveProperty('symbol');
-      expect(result[0].json).toHaveProperty('decimals');
-      expect(result[0].json).toHaveProperty('totalSupply');
-    });
-  });
-
-  describe('transfer operation', () => {
-    it('should transfer tokens successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'transfer';
-          case 'tokenAddress': return '0x765DE816845861e75A25fCA122bb6898B8B1282a';
-          case 'to': return '0x0987654321098765432109876543210987654321';
-          case 'value': return '1000000000000000000';
-          case 'privateKey': return '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
-          case 'gasLimit': return 100000;
-          case 'gasPrice': return '';
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest
-        .mockResolvedValueOnce(JSON.stringify({ jsonrpc: '2.0', id: 1, result: '0x1' })) // nonce
-        .mockResolvedValueOnce(JSON.stringify({ jsonrpc: '2.0', id: 2, result: '0x3B9ACA00' })) // gasPrice
-        .mockResolvedValueOnce(JSON.stringify({ jsonrpc: '2.0', id: 3, result: '0x1234567890abcdef' })); // txHash
-
-      const result = await executeStableTokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toHaveProperty('transactionHash');
-      expect(result[0].json).toHaveProperty('from');
-      expect(result[0].json).toHaveProperty('to');
-      expect(result[0].json).toHaveProperty('value');
-    });
-  });
-});
-
-describe('Identity Resource', () => {
-  let mockExecuteFunctions: any;
-
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://forno.celo.org',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
-  });
-
-  describe('requestAttestations', () => {
-    it('should request phone number attestations successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'requestAttestations';
-          case 'phoneNumber': return '+1234567890';
-          case 'attestationsRequested': return 3;
-          case 'privateKey': return '0x1234567890abcdef';
-          default: return undefined;
-        }
-      });
-
+  describe('isValidator operation', () => {
+    it('should check if address is validator successfully', async () => {
       const mockResponse = {
         jsonrpc: '2.0',
         id: 1,
-        result: '0x1234567890abcdef',
+        result: '0x0000000000000000000000000000000000000000000000000000000000000001'
       };
+
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('isValidator')
+        .mockReturnValueOnce('0x123456ADDRESS_PLACEHOLDER789')
+        .mockReturnValueOnce('latest')
+        .mockReturnValueOnce('0xcontractaddress')
+        .mockReturnValueOnce('0xvalidatoraddress');
 
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-    });
-
-    it('should handle request attestations error', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'requestAttestations';
-          case 'phoneNumber': return '+1234567890';
-          case 'attestationsRequested': return 3;
-          case 'privateKey': return '0x1234567890abcdef';
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Request failed'));
-      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-
-      const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json.error).toBe('Request failed');
-    });
-  });
-
-  describe('selectIssuers', () => {
-    it('should select attestation issuers successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'selectIssuers';
-          case 'phoneNumber': return '+1234567890';
-          case 'attestationsRequested': return 3;
-          default: return undefined;
-        }
-      });
-
-      const mockResponse = {
-        jsonrpc: '2.0',
-        id: 1,
-        result: ['0xissuer1', '0xissuer2', '0xissuer3'],
-      };
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const items = [{ json: {} }];
+      const result = await executeValidatorOperations.call(mockExecuteFunctions, items);
 
       expect(result).toHaveLength(1);
       expect(result[0].json).toEqual(mockResponse);
     });
   });
 
-  describe('completeAttestations', () => {
-    it('should complete attestation process successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'completeAttestations';
-          case 'phoneNumber': return '+1234567890';
-          case 'attestationCode': return '123456';
-          default: return undefined;
-        }
-      });
-
+  describe('getValidatorGroup operation', () => {
+    it('should get validator group information successfully', async () => {
       const mockResponse = {
         jsonrpc: '2.0',
         id: 1,
-        result: '0xtransactionhash',
+        result: '0x0000000000000000000000000000000000000000000000000000000000000020'
       };
+
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('getValidatorGroup')
+        .mockReturnValueOnce('0x123456ADDRESS_PLACEHOLDER789')
+        .mockReturnValueOnce('latest')
+        .mockReturnValueOnce('0xcontractaddress')
+        .mockReturnValueOnce('0xvalidatoraddress');
 
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const items = [{ json: {} }];
+      const result = await executeValidatorOperations.call(mockExecuteFunctions, items);
 
       expect(result).toHaveLength(1);
       expect(result[0].json).toEqual(mockResponse);
     });
-  });
-
-  describe('getAttestations', () => {
-    it('should get attestation status successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'getAttestations';
-          case 'phoneNumber': return '+1234567890';
-          case 'address': return '0x1234567890abcdef1234567890abcdef12345678';
-          default: return undefined;
-        }
-      });
-
-      const mockResponse = {
-        jsonrpc: '2.0',
-        id: 1,
-        result: {
-          completed: 3,
-          total: 3,
-        },
-      };
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-    });
-  });
-
-  describe('getAccountMetadata', () => {
-    it('should get account metadata successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'getAccountMetadata';
-          case 'address': return '0x1234567890abcdef1234567890abcdef12345678';
-          default: return undefined;
-        }
-      });
-
-      const mockResponse = {
-        jsonrpc: '2.0',
-        id: 1,
-        result: 'https://example.com/metadata.json',
-      };
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-    });
-  });
-
-  describe('setAccountMetadata', () => {
-    it('should set account metadata successfully', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'setAccountMetadata';
-          case 'metadataURL': return 'https://example.com/metadata.json';
-          case 'privateKey': return '0x1234567890abcdef';
-          default: return undefined;
-        }
-      });
-
-      const mockResponse = {
-        jsonrpc: '2.0',
-        id: 1,
-        result: '0xtransactionhash',
-      };
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-    });
-  });
-});
-
-describe('ValidatorStaking Resource', () => {
-  let mockExecuteFunctions: any;
-
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://forno.celo.org',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
-  });
-
-  test('should execute vote operation successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, index: number) => {
-      if (paramName === 'operation') return 'vote';
-      if (paramName === 'group') return '0x1234567890123456789012345678901234567890';
-      if (paramName === 'value') return '1000000000000000000';
-      if (paramName === 'privateKey') return '0xprivatekey123';
-      return undefined;
-    });
-
-    const mockResponse = {
-      jsonrpc: '2.0',
-      id: '1',
-      result: '0xtransactionhash123',
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeValidatorStakingOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }],
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'POST',
-      url: 'https://forno.celo.org',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: expect.objectContaining({
-        jsonrpc: '2.0',
-        method: 'eth_sendTransaction',
-      }),
-      json: true,
-    });
-  });
-
-  test('should execute getElectedValidators operation successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, index: number) => {
-      if (paramName === 'operation') return 'getElectedValidators';
-      return undefined;
-    });
-
-    const mockResponse = {
-      jsonrpc: '2.0',
-      id: '1',
-      result: ['0xvalidator1', '0xvalidator2'],
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeValidatorStakingOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }],
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-  });
-
-  test('should handle errors when continueOnFail is true', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'vote';
-      throw new Error('Parameter error');
-    });
-
-    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-
-    const result = await executeValidatorStakingOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }],
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json.error).toBe('Parameter error');
-  });
-
-  test('should execute lock operation successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      if (paramName === 'operation') return 'lock';
-      if (paramName === 'value') return '2000000000000000000';
-      if (paramName === 'privateKey') return '0xprivatekey456';
-      return undefined;
-    });
-
-    const mockResponse = {
-      jsonrpc: '2.0',
-      id: '1',
-      result: '0xlocktransactionhash',
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeValidatorStakingOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }],
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
   });
 });
 
@@ -708,7 +590,7 @@ describe('Governance Resource', () => {
     mockExecuteFunctions = {
       getNodeParameter: jest.fn(),
       getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
+        apiKey: 'test-key',
         baseUrl: 'https://forno.celo.org',
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
@@ -721,226 +603,240 @@ describe('Governance Resource', () => {
     };
   });
 
-  test('should submit governance proposal successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation': return 'propose';
-        case 'values': return ['100'];
-        case 'destinations': return ['0x123...'];
-        case 'data': return ['0x'];
-        case 'descriptionURL': return 'https://example.com/proposal';
-        case 'privateKey': return '0xprivatekey123';
-        default: return '';
-      }
-    });
-
+  it('should get proposals successfully', async () => {
     const mockResponse = {
-      result: '0x1234567890abcdef',
+      jsonrpc: '2.0',
+      result: '0x123456789abcdef',
+      id: 1,
     };
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getProposals')
+      .mockReturnValueOnce('mainnet')
+      .mockReturnValueOnce({ to: '0x123', data: '0x456' })
+      .mockReturnValueOnce('latest');
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(JSON.stringify(mockResponse));
 
     const result = await executeGovernanceOperations.call(
       mockExecuteFunctions,
-      [{ json: {} }]
+      [{ json: {} }],
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse.result);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(
-      expect.objectContaining({
-        method: 'POST',
-        body: expect.objectContaining({
-          method: 'eth_sendRawTransaction',
-        }),
-      })
-    );
+    expect(result[0].json).toEqual(mockResponse);
   });
 
-  test('should vote on proposal successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation': return 'vote';
-        case 'proposalId': return '123';
-        case 'vote': return '1';
-        case 'privateKey': return '0xprivatekey123';
-        default: return '';
-      }
-    });
+  it('should handle get proposals error', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getProposals')
+      .mockReturnValueOnce('mainnet');
 
-    const mockResponse = {
-      result: '0x987654321',
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeGovernanceOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse.result);
-  });
-
-  test('should get proposal details successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation': return 'getProposal';
-        case 'proposalId': return '123';
-        default: return '';
-      }
-    });
-
-    const mockResponse = {
-      result: {
-        id: '123',
-        proposer: '0x123...',
-        status: 'active',
-        description: 'Test proposal',
-      },
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeGovernanceOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse.result);
-  });
-
-  test('should get all proposals successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation': return 'getProposals';
-        default: return '';
-      }
-    });
-
-    const mockResponse = {
-      result: [
-        { id: '1', status: 'active' },
-        { id: '2', status: 'executed' },
-      ],
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeGovernanceOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse.result);
-  });
-
-  test('should execute approved proposal successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation': return 'execute';
-        case 'proposalId': return '123';
-        case 'privateKey': return '0xprivatekey123';
-        default: return '';
-      }
-    });
-
-    const mockResponse = {
-      result: '0xexecutiontx123',
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeGovernanceOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse.result);
-  });
-
-  test('should get vote record successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation': return 'getVoteRecord';
-        case 'address': return '0x123...';
-        case 'proposalId': return '123';
-        default: return '';
-      }
-    });
-
-    const mockResponse = {
-      result: {
-        vote: '1',
-        weight: '1000000000000000000',
-      },
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeGovernanceOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }]
-    );
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse.result);
-  });
-
-  test('should handle API errors gracefully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation': return 'getProposal';
-        case 'proposalId': return '999';
-        default: return '';
-      }
-    });
-
-    const errorResponse = {
-      error: {
-        code: -32000,
-        message: 'Proposal not found',
-      },
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(errorResponse);
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
     mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
     const result = await executeGovernanceOperations.call(
       mockExecuteFunctions,
+      [{ json: {} }],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.error).toBe('API Error');
+  });
+
+  it('should get proposal details successfully', async () => {
+    const mockResponse = {
+      jsonrpc: '2.0',
+      result: '0x987654321fedcba',
+      id: 1,
+    };
+
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getProposal')
+      .mockReturnValueOnce('mainnet')
+      .mockReturnValueOnce({ to: '0x789', data: '0xabc' })
+      .mockReturnValueOnce('12345');
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(JSON.stringify(mockResponse));
+
+    const result = await executeGovernanceOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockResponse);
+  });
+
+  it('should vote on proposal successfully', async () => {
+    const mockResponse = {
+      jsonrpc: '2.0',
+      result: '0xtransactionhash123',
+      id: 1,
+    };
+
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('vote')
+      .mockReturnValueOnce('mainnet')
+      .mockReturnValueOnce({
+        to: '0x123',
+        data: '0x456',
+        from: '0x789',
+        gas: '0x5208',
+        gasPrice: '0x3b9aca00',
+      });
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(JSON.stringify(mockResponse));
+
+    const result = await executeGovernanceOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }],
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json).toEqual(mockResponse);
+  });
+
+  it('should handle vote error', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('vote')
+      .mockReturnValueOnce('mainnet');
+
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Transaction failed'));
+    mockExecuteFunctions.continueOnFail.mockReturnValue(false);
+
+    await expect(
+      executeGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }]),
+    ).rejects.toThrow('Transaction failed');
+  });
+});
+
+describe('StableCoin Resource', () => {
+  let mockExecuteFunctions: any;
+
+  beforeEach(() => {
+    mockExecuteFunctions = {
+      getNodeParameter: jest.fn(),
+      getCredentials: jest.fn().mockResolvedValue({ 
+        apiKey: 'test-key', 
+        baseUrl: 'https://forno.celo.org' 
+      }),
+      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+      continueOnFail: jest.fn().mockReturnValue(false),
+      helpers: { 
+        httpRequest: jest.fn(),
+        requestWithAuthentication: jest.fn() 
+      },
+    };
+  });
+
+  it('should get stablecoin balance successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getStableCoinBalance')
+      .mockReturnValueOnce({ to: '0x123', data: '0xabc' })
+      .mockReturnValueOnce('latest');
+    
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      jsonrpc: '2.0',
+      result: '0x1000000000000000000',
+      id: 1
+    });
+
+    const result = await executeStableCoinOperations.call(
+      mockExecuteFunctions,
       [{ json: {} }]
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0].json.error).toBeDefined();
+    expect(result[0].json.result).toBe('0x1000000000000000000');
   });
 
-  test('should throw error for unknown operation', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      switch (paramName) {
-        case 'operation': return 'unknownOperation';
-        default: return '';
-      }
+  it('should get exchange rate successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getExchangeRate')
+      .mockReturnValueOnce({ to: '0x456', data: '0xdef' })
+      .mockReturnValueOnce('latest');
+    
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      jsonrpc: '2.0',
+      result: '0x1000000',
+      id: 1
     });
 
+    const result = await executeStableCoinOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.result).toBe('0x1000000');
+  });
+
+  it('should mint stablecoin successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('mintStableCoin')
+      .mockReturnValueOnce({ 
+        from: '0x123', 
+        to: '0x456', 
+        data: '0xabc',
+        gas: '0x5208',
+        gasPrice: '0x3b9aca00'
+      });
+    
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+      jsonrpc: '2.0',
+      result: '0xtxhash123',
+      id: 1
+    });
+
+    const result = await executeStableCoinOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.result).toBe('0xtxhash123');
+  });
+
+  it('should handle API errors', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getStableCoinBalance')
+      .mockReturnValueOnce({ to: '0x123', data: '0xabc' })
+      .mockReturnValueOnce('latest');
+    
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(
+      new Error('Network error')
+    );
+
+    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+
+    const result = await executeStableCoinOperations.call(
+      mockExecuteFunctions,
+      [{ json: {} }]
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.error).toBe('Network error');
+  });
+
+  it('should throw error for unknown operation', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('unknownOperation');
+
     await expect(
-      executeGovernanceOperations.call(mockExecuteFunctions, [{ json: {} }])
+      executeStableCoinOperations.call(mockExecuteFunctions, [{ json: {} }])
     ).rejects.toThrow('Unknown operation: unknownOperation');
   });
 });
 
-describe('Exchange Resource', () => {
+describe('Identity Resource', () => {
   let mockExecuteFunctions: any;
 
   beforeEach(() => {
     mockExecuteFunctions = {
       getNodeParameter: jest.fn(),
       getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
+        apiKey: 'test-key',
         baseUrl: 'https://forno.celo.org',
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
@@ -953,130 +849,90 @@ describe('Exchange Resource', () => {
     };
   });
 
-  test('should exchange CELO for cUSD successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      const params: any = {
-        operation: 'exchange',
-        sellAmount: '1000000000000000000',
-        minBuyAmount: '900000000000000000',
-        sellToken: 'CELO',
-        buyToken: 'cUSD',
-        privateKey: '0x1234567890abcdef',
-      };
-      return params[paramName];
-    });
+  it('should get attestations successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getAttestations')
+      .mockReturnValueOnce('mainnet')
+      .mockReturnValueOnce({ to: '0x123', data: '0xabc' })
+      .mockReturnValueOnce('latest');
 
-    const mockResponse = {
-      jsonrpc: '2.0',
-      id: 1,
-      result: '0x1234567890abcdef1234567890abcdef12345678',
-    };
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(
+      JSON.stringify({ jsonrpc: '2.0', result: '0x123', id: 1 })
+    );
 
-    mockExecuteFunctions.helpers.httpRequest
-      .mockResolvedValueOnce({ result: '0x1' }) // nonce
-      .mockResolvedValueOnce(mockResponse); // transaction
-
-    const items = [{ json: {} }];
-    const result = await executeExchangeOperations.call(mockExecuteFunctions, items);
+    const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
+    expect(result[0].json.result).toBe('0x123');
   });
 
-  test('should get exchange rate successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      const params: any = {
-        operation: 'getExchangeRate',
-        sellToken: 'CELO',
-        buyToken: 'cUSD',
-        sellAmount: '1000000000000000000',
-      };
-      return params[paramName];
-    });
-
-    const mockResponse = {
-      jsonrpc: '2.0',
-      id: 1,
-      result: '0x0de0b6b3a7640000',
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const items = [{ json: {} }];
-    const result = await executeExchangeOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-  });
-
-  test('should get buy token amount successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      const params: any = {
-        operation: 'getBuyTokenAmount',
-        sellToken: 'CELO',
-        buyToken: 'cUSD',
-        sellAmount: '1000000000000000000',
-      };
-      return params[paramName];
-    });
-
-    const mockResponse = {
-      jsonrpc: '2.0',
-      id: 1,
-      result: '0x0de0b6b3a7640000',
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const items = [{ json: {} }];
-    const result = await executeExchangeOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-  });
-
-  test('should get reserves successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      const params: any = {
-        operation: 'getReserves',
-      };
-      return params[paramName];
-    });
-
-    const mockResponse = {
-      jsonrpc: '2.0',
-      id: 1,
-      result: '0x0000000000000000000000000000000000000000000000000de0b6b3a7640000',
-    };
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const items = [{ json: {} }];
-    const result = await executeExchangeOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-  });
-
-  test('should handle errors properly', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-      const params: any = {
-        operation: 'getExchangeRate',
-        sellToken: 'CELO',
-        buyToken: 'cUSD',
-        sellAmount: '1000000000000000000',
-      };
-      return params[paramName];
-    });
+  it('should handle get attestations error', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getAttestations')
+      .mockReturnValueOnce('mainnet')
+      .mockReturnValueOnce({ to: '0x123', data: '0xabc' })
+      .mockReturnValueOnce('latest');
 
     mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Network error'));
     mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
-    const items = [{ json: {} }];
-    const result = await executeExchangeOperations.call(mockExecuteFunctions, items);
+    const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(result).toHaveLength(1);
     expect(result[0].json.error).toBe('Network error');
+  });
+
+  it('should request attestation successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('requestAttestation')
+      .mockReturnValueOnce('mainnet')
+      .mockReturnValueOnce({ from: '0x123', to: '0x456', data: '0xabc' })
+      .mockReturnValueOnce('21000')
+      .mockReturnValueOnce('1000000000');
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(
+      JSON.stringify({ jsonrpc: '2.0', result: '0x789', id: 1 })
+    );
+
+    const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.result).toBe('0x789');
+  });
+
+  it('should complete attestation successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('completeAttestation')
+      .mockReturnValueOnce('mainnet')
+      .mockReturnValueOnce({ from: '0x123', to: '0x456', data: '0xdef' })
+      .mockReturnValueOnce('')
+      .mockReturnValueOnce('');
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(
+      JSON.stringify({ jsonrpc: '2.0', result: '0x999', id: 1 })
+    );
+
+    const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.result).toBe('0x999');
+  });
+
+  it('should get attestation issuers successfully', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getAttestationIssuers')
+      .mockReturnValueOnce('alfajores')
+      .mockReturnValueOnce({ to: '0x789', data: '0xdef' })
+      .mockReturnValueOnce('latest');
+
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(
+      JSON.stringify({ jsonrpc: '2.0', result: ['0x111', '0x222'], id: 1 })
+    );
+
+    const result = await executeIdentityOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].json.result).toEqual(['0x111', '0x222']);
   });
 });
 });
