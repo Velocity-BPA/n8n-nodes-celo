@@ -8,25 +8,25 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-This n8n community node provides comprehensive integration with the Celo blockchain platform, featuring 6 essential resources including Accounts, StableTokens, Identity, ValidatorStaking, Governance, and Exchange. Build powerful DeFi workflows, manage mobile-first financial applications, and interact with Celo's carbon-negative blockchain ecosystem directly from your n8n automation workflows.
+This n8n community node provides comprehensive integration with the Celo blockchain platform, featuring 7 resources for account management, transaction processing, block exploration, validator operations, governance participation, stablecoin interactions, and identity verification. It enables developers to build powerful automation workflows that interact with Celo's mobile-first blockchain ecosystem and dual-token economy.
 
 ![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
-![Celo](https://img.shields.io/badge/Celo-Blockchain-green)
-![DeFi](https://img.shields.io/badge/DeFi-Compatible-yellow)
-![Mobile First](https://img.shields.io/badge/Mobile-First-purple)
+![Celo](https://img.shields.io/badge/Celo-Mainnet-green)
+![Blockchain](https://img.shields.io/badge/Blockchain-Ready-orange)
+![DeFi](https://img.shields.io/badge/DeFi-Enabled-purple)
 
 ## Features
 
-- **Account Management** - Create, query, and manage Celo accounts with balance tracking and transaction history
-- **StableToken Operations** - Handle cUSD, cEUR, and cREAL stablecoin transfers, minting, and burning operations
-- **Identity Verification** - Manage on-chain identity attestations, phone number verification, and reputation scoring
-- **Validator Staking** - Interact with Celo's proof-of-stake consensus including delegation, rewards, and governance participation
-- **Governance Integration** - Submit proposals, vote on protocol changes, and track governance activity
-- **Exchange Operations** - Execute token swaps, provide liquidity, and access DEX functionality on Celo
-- **Mobile-Optimized** - Built for Celo's mobile-first approach with lightweight operations and efficient gas usage
-- **Carbon Negative** - Leverage Celo's carbon-negative blockchain for environmentally conscious DeFi applications
+- **Account Management** - Query account balances, transaction history, and account details across Celo addresses
+- **Transaction Processing** - Send payments, execute smart contracts, and monitor transaction status on Celo network
+- **Block Exploration** - Retrieve block data, analyze network activity, and track blockchain metrics
+- **Validator Operations** - Monitor validator performance, voting power, and delegation status
+- **Governance Integration** - Participate in proposals, vote on network upgrades, and track governance activities
+- **StableCoin Support** - Interact with cUSD, cEUR, and other Celo stablecoins for payments and transfers
+- **Identity Verification** - Manage attestations, verify phone numbers, and handle identity claims on Celo
+- **Real-time Monitoring** - Track network events, price feeds, and blockchain activity with automated triggers
 
 ## Installation
 
@@ -61,123 +61,129 @@ n8n start
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| API Key | Your Celo API key for authentication | Yes |
-| Network | Celo network (mainnet, alfajores, baklava) | Yes |
-| RPC URL | Custom RPC endpoint URL (optional) | No |
-| Private Key | Account private key for transaction signing | No |
-| Testnet Mode | Enable for development and testing | No |
+| API Key | Your Celo node API key or service provider key | Yes |
+| Network | Target network (mainnet, alfajores, baklava) | Yes |
+| Node URL | Custom Celo node endpoint (optional) | No |
+| Private Key | Private key for transaction signing (encrypted) | No |
 
 ## Resources & Operations
 
-### 1. Accounts
+### 1. Account
 
 | Operation | Description |
 |-----------|-------------|
-| Get Account | Retrieve account details including balances and metadata |
-| Create Account | Generate new Celo account with private/public key pair |
-| Get Balance | Check CELO and stablecoin balances for specific account |
-| Get Transaction History | Fetch historical transactions for an account |
-| Send Transaction | Execute CELO transfers between accounts |
-| Estimate Gas | Calculate gas costs for pending transactions |
+| Get Balance | Retrieve CELO and stablecoin balances for an address |
+| Get Transaction History | Fetch transaction history for an account |
+| Get Account Details | Get comprehensive account information |
+| Create Account | Generate new Celo account with private key |
+| Import Account | Import existing account using private key or mnemonic |
 
-### 2. StableTokens
-
-| Operation | Description |
-|-----------|-------------|
-| Transfer | Send cUSD, cEUR, or cREAL between accounts |
-| Get Balance | Check stablecoin balances across all denominations |
-| Mint | Create new stablecoin tokens (authorized accounts only) |
-| Burn | Destroy stablecoin tokens to maintain price stability |
-| Get Total Supply | Retrieve total supply for each stablecoin |
-| Get Exchange Rate | Fetch current exchange rates between stablecoins |
-
-### 3. Identity
+### 2. Transaction
 
 | Operation | Description |
 |-----------|-------------|
-| Verify Phone | Initiate phone number verification process |
-| Get Attestations | Retrieve identity attestations for an account |
-| Request Attestation | Request new identity verification from validators |
-| Complete Attestation | Finalize attestation process with verification code |
-| Get Reputation Score | Calculate reputation based on verified attestations |
-| Revoke Attestation | Remove previously issued attestation |
+| Send Payment | Send CELO or stablecoins to another address |
+| Get Transaction | Retrieve transaction details by hash |
+| Get Receipt | Get transaction receipt and execution status |
+| Estimate Gas | Calculate gas costs for transactions |
+| Track Transaction | Monitor transaction status until confirmation |
+| Batch Transactions | Execute multiple transactions in sequence |
 
-### 4. ValidatorStaking
+### 3. Block
 
 | Operation | Description |
 |-----------|-------------|
-| Get Validators | List all registered validators with performance metrics |
-| Delegate Stake | Delegate CELO tokens to validator for staking rewards |
-| Undelegate Stake | Remove delegated stake from validator |
-| Claim Rewards | Collect accumulated staking rewards |
-| Get Delegation | Check delegation status and reward amounts |
-| Register Validator | Register new validator node (requires minimum stake) |
+| Get Block | Retrieve block information by number or hash |
+| Get Latest Block | Get the most recent block on the network |
+| Get Block Range | Fetch multiple blocks within a specified range |
+| Get Block Transactions | List all transactions in a specific block |
+| Monitor New Blocks | Watch for new blocks and trigger workflows |
+
+### 4. Validator
+
+| Operation | Description |
+|-----------|-------------|
+| Get Validator Info | Retrieve validator details and performance metrics |
+| List Active Validators | Get all active validators in the current epoch |
+| Get Validator Group | Fetch validator group information and members |
+| Check Voting Power | Monitor validator voting power and delegation |
+| Get Rewards | Calculate validator rewards and commission |
+| Track Performance | Monitor validator uptime and signing performance |
 
 ### 5. Governance
 
 | Operation | Description |
 |-----------|-------------|
-| Get Proposals | List all governance proposals with status and details |
-| Submit Proposal | Create new governance proposal for protocol changes |
-| Vote | Cast vote on active governance proposals |
-| Get Votes | Retrieve voting history and results |
-| Execute Proposal | Execute approved governance proposal |
-| Get Voter Info | Check voting power and participation history |
+| Get Proposal | Retrieve governance proposal details |
+| List Proposals | Fetch all active and historical proposals |
+| Vote on Proposal | Cast votes on governance proposals |
+| Get Voting History | Track voting history for an address |
+| Monitor Governance | Watch for new proposals and voting events |
+| Calculate Voting Power | Determine voting power for locked CELO |
 
-### 6. Exchange
+### 6. StableCoin
 
 | Operation | Description |
 |-----------|-------------|
-| Swap Tokens | Exchange between CELO and stablecoins |
-| Get Quote | Calculate swap rates and fees |
-| Add Liquidity | Provide liquidity to exchange pools |
-| Remove Liquidity | Withdraw liquidity and collect fees |
-| Get Pool Info | Retrieve liquidity pool statistics |
-| Get Trading History | Fetch historical trades and volume data |
+| Get Price | Retrieve current exchange rates for Celo stablecoins |
+| Transfer Stablecoin | Send cUSD, cEUR, or other stable tokens |
+| Get Supply Info | Check total supply and circulation of stablecoins |
+| Monitor Stability | Track stability mechanism and reserve ratios |
+| Exchange Tokens | Convert between CELO and stablecoins |
+| Track Price History | Analyze historical price data and trends |
+
+### 7. Identity
+
+| Operation | Description |
+|-----------|-------------|
+| Get Attestations | Retrieve identity attestations for an address |
+| Verify Phone Number | Verify phone number through SMS attestation |
+| Create Claim | Generate identity claims and metadata |
+| Verify Claim | Validate existing identity claims |
+| Get Identity Metadata | Fetch identity information from registry |
+| Monitor Attestations | Track new attestations and verifications |
 
 ## Usage Examples
 
 ```javascript
-// Transfer cUSD stablecoins
+// Send CELO payment
 {
-  "resource": "StableTokens",
-  "operation": "Transfer",
-  "to": "0x742d35Cc6634C0532925a3b8D400e9024C4d45e4",
-  "amount": "100.50",
-  "token": "cUSD",
+  "resource": "Transaction",
+  "operation": "Send Payment",
+  "to": "0x742d35cc6634c0532925a3b8d6ac9c7c5cea7073",
+  "amount": "10",
+  "currency": "CELO",
   "memo": "Payment for services"
 }
 ```
 
 ```javascript
-// Delegate CELO to validator
+// Check validator performance
 {
-  "resource": "ValidatorStaking",
-  "operation": "Delegate Stake",
-  "validator": "0x8b7649116f169d2d2aebb6ea1a77f0bfb97e1285",
-  "amount": "1000",
-  "lockupPeriod": "180"
+  "resource": "Validator",
+  "operation": "Track Performance",
+  "validatorAddress": "0x1234567890123456789012345678901234567890",
+  "epochRange": 10
 }
 ```
 
 ```javascript
-// Vote on governance proposal
+// Monitor governance proposal
 {
   "resource": "Governance",
-  "operation": "Vote",
+  "operation": "Get Proposal",
   "proposalId": "42",
-  "vote": "Yes",
-  "weight": "500.75"
+  "includeVotes": true
 }
 ```
 
 ```javascript
-// Verify phone number for identity
+// Verify phone number attestation
 {
   "resource": "Identity",
-  "operation": "Verify Phone",
+  "operation": "Verify Phone Number",
   "phoneNumber": "+1234567890",
-  "account": "0x742d35Cc6634C0532925a3b8D400e9024C4d45e4"
+  "address": "0x742d35cc6634c0532925a3b8d6ac9c7c5cea7073"
 }
 ```
 
@@ -185,12 +191,12 @@ n8n start
 
 | Error | Description | Solution |
 |-------|-------------|----------|
+| Invalid API Key | Authentication failed with provided credentials | Verify API key and network configuration |
 | Insufficient Balance | Account lacks funds for transaction | Check account balance and add funds |
-| Invalid Network | Network parameter not recognized | Use mainnet, alfajores, or baklava |
-| Gas Estimation Failed | Cannot calculate transaction gas costs | Check network connectivity and try again |
-| Attestation Expired | Identity verification code expired | Request new attestation code |
-| Proposal Not Found | Governance proposal ID invalid | Verify proposal exists and is active |
-| Validator Inactive | Selected validator not accepting delegations | Choose different active validator |
+| Network Timeout | Connection to Celo network failed | Retry request or switch to different node |
+| Invalid Address | Provided address format is incorrect | Validate address format and checksum |
+| Transaction Failed | Transaction execution reverted | Check gas limits, contract state, and parameters |
+| Rate Limit Exceeded | Too many requests to API endpoint | Implement request throttling and retry logic |
 
 ## Development
 
